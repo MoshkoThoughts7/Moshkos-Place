@@ -1,4 +1,4 @@
-$files = @("parlamentum.html", "resource-pack.html", "script.js", "shared.js", "home.html")
+$files = @("Timeline.html", "resource-pack.html", "script.js", "shared.js", "home.html")
 
 foreach ($f in $files) {
     if (Test-Path $f) {
