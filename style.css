@@ -3696,7 +3696,7 @@ canvas:hover {
 
 .stat-card:hover {
     border-color: rgba(167, 139, 250, 0.5);
-    box-shadow: 0 4px 24px rgba(139, 92, 246, 0.2);
+    box-shadow: 0 4px 24px rgba(19, 9, 43, 0.2);
     transform: translateY(-3px);
 }
 
