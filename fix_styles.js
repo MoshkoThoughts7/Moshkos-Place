@@ -1,6 +1,6 @@
 const fs = require('fs');
 
-const files = ['parlamentum.html', 'resource-pack.html'];
+const files = ['Timeline.html', 'resource-pack.html'];
 
 files.forEach(filepath => {
     let content = fs.readFileSync(filepath, 'utf-8');

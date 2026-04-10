@@ -96,7 +96,7 @@ function initNavbar() {
                 <li><a href="updates.html" class="nav-link">Updates</a></li>
                 <li><a href="games.html" class="nav-link">Games</a></li>
                 <li><a href="minecraft.html" class="nav-link">Minecraft</a></li>
-                <li><a href="parlamentum.html" class="nav-link">Timeline</a></li>
+                <li><a href="Timeline.html" class="nav-link">Timeline</a></li>
             </ul>
 
             <div style="width: 50px;"></div>
