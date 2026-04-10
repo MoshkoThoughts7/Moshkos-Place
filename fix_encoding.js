@@ -7,7 +7,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const files = ['Timeline.html', 'resource-pack.html', 'script.js', 'shared.js', 'home.html'];
+const files = ['timeline.html', 'resource-pack.html', 'script.js', 'shared.js', 'home.html'];
 
 // iconv-lite is not always available; we implement the Windows-1252 → byte recovery manually.
 // Strategy: read the file as a Buffer, decode as latin1 (which is a 1:1 byte mapping),
