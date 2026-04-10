@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Latest updates and news from MOSHKO'S">
+    <title>Updates - MOSHKO'S</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&family=Assistant:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="space-background">
+        <!-- populated by shared.js -->
+    </div>
+
+    <!-- Global Libraries (Safe for file:// usage) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cannon.js/0.6.2/cannon.min.js"></script>
+
+    <!-- App Logic -->
+    <script src="ragdoll_physics.js"></script>
+    <script src="ragdoll_background.js"></script>
+
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <!-- populated by shared.js -->
+    </nav>
+
+    <div id="content-root">
+        <main id="main-content">
+            <!-- Page Header -->
+            <section class="page-header">
+                <div class="container">
+                    <h1 class="page-title" data-aos="fade-up">Latest Updates</h1>
+                    <p class="page-subtitle" data-aos="fade-up">Stay current with what's new in the
+                        Moshko's Place</p>
+                </div>
+            </section>
+
+            <!-- Updates Section -->
+            <section class="section updates-section">
+                <div class="container">
+                    <div class="updates-grid">
+                        <div class="update-card glass-card" data-aos="fade-up">
+                            <div class="update-icon">🧍</div>
+                            <div class="update-content">
+                                <span class="update-date">Jan 13, 2025</span>
+                                <h3>New Rugdoll Simulator</h3>
+                                <p dir="rtl" style="text-align:right;">בובת מיינקראפט למשחק נוספה לאתר!</p>
+                            </div>
+                        </div>
+                        <div class="update-card glass-card" data-aos="fade-up">
+                            <div class="update-icon">🚀</div>
+                            <div class="update-content">
+                                <span class="update-date">Jan 10, 2026</span>
+                                <h3>New Site Relaunch</h3>
+                                <p dir="rtl" style="text-align:right;">האתר חודש והושק מחדש!</p>
+                            </div>
+                        </div>
+                        <div class="update-card glass-card" data-aos="fade-up">
+                            <div class="update-icon">🎮</div>
+                            <div class="update-content">
+                                <span class="update-date">Oct 4, 2025</span>
+                                <h3>New Games Added</h3>
+                                <p dir="rtl" style="text-align:right;">משחקים חדשים נוספו לאתר!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <!-- populated by shared.js -->
+    </footer>
+
+    <div id="ragdoll-container"></div>
+    <div class="skin-control-panel">
+        <input type="text" id="skin-username" placeholder="Minecraft Username" value="">
+        <button onclick="window.changeSkin(document.getElementById('skin-username').value)">Change Skin</button>
+        <button onclick="window.resetRagdoll()" style="background: #e74c3c;">Reset</button>
+    </div>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="shared.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>

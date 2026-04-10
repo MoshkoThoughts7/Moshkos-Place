@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="he" dir="ltr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Moshko's Custom Minecraft Resource Pack">
+    <title>Resource Pack - MOSHKO'S</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&family=Assistant:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <style>
+        .pack-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .pack-feature-card {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .pack-img {
+            width: 100%;
+            border-radius: 12px;
+            margin-top: auto;
+            /* Push to bottom if needed */
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .pack-img:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 30px rgba(139, 92, 246, 0.3);
+        }
+
+        /* Removed lang toggle styles */
+
+        [lang="he"] {
+            direction: rtl;
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-list li {
+            position: relative;
+            padding-inline-start: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--color-text-secondary);
+        }
+
+        .feature-list li::before {
+            content: '\25B6';
+            position: absolute;
+            inset-inline-start: 0;
+            color: var(--color-primary);
+        }
+
+        .download-zone {
+            text-align: center;
+            margin-top: 4rem;
+            padding: 3rem;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(236, 72, 153, 0.1));
+            border-radius: 20px;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Background -->
+    <div class="space-background">
+        <!-- populated by shared.js -->
+    </div>
+
+    <!-- Global Libraries (Safe for file:// usage) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cannon.js/0.6.2/cannon.min.js"></script>
+
+    <!-- App Logic -->
+    <script src="ragdoll_physics.js"></script>
+    <script src="ragdoll_background.js"></script>
+
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar" dir="ltr">
+        <!-- populated by navbar.js -->
+    </nav>
+
+    <div id="content-root">
+        <main id="main-content">
+            <!-- Header -->
+            <section class="page-header">
+                <div class="container">
+                    <h1 class="page-title" data-aos="fade-up">Moshko Texture Pack</h1>
+                    <p class="page-subtitle" data-aos="fade-up">Clean, Optimized, Vanilla-Friendly</p>
+                    <div style="margin-top: 2rem;" data-aos="fade-up" data-aos-delay="100">
+                        <a href="minecraft.html" class="btn btn-primary">Back to Minecraft Page</a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Main Content -->
+            <section class="section">
+                <div class="container">
+                    <!-- HEBREW CONTENT ONLY -->
+                    <div dir="rtl">
+                        <div class="glass-card" style="margin-bottom: 2rem;">
+                            <h2 class="section-title" style="margin-bottom: 1rem; font-size: 2rem;">סקירה כללית</h2>
+                            <p>חבילת משאבים נקייה וקלת משקל שמרעננת מסכי ממשק משתמש גרפי, מתקנת/משפרת מספר מודלים
+                                ומרקמים של
+                                בלוקים (במיוחד דלתות ודלתות מלכודות), ומוסיפה אנימציות צמחייה עדינות באמצעות שיידרים
+                                מובנים של
+                                הליבה - והכל תוך שמירה על המראה המקורי של מיינקראפט.</p>
+                            <div style="margin-top: 1rem; display:flex; gap: 1rem; flex-wrap: wrap;">
+                                <span class="btn btn-secondary" style="font-size: 0.9rem; padding: 0.5rem 1rem;">גרסה:
+                                    1.20-1.21.9</span>
+                                <span class="btn btn-secondary"
+                                    style="font-size: 0.9rem; padding: 0.5rem 1rem;">רזולוציה: ×16
+                                    (ונילה)</span>
+                            </div>
+                        </div>
+
+                        <div class="pack-grid">
+                            <!-- Feature 1: Doors -->
+                            <div class="glass-card pack-feature-card" data-aos="fade-up">
+                                <h3 style="color: var(--color-primary-light);">🚪 דלתות משודרגות</h3>
+                                <p style="color: var(--color-text-secondary);">דלתות ודלתות מלכודת עוצבו מחדש – מודלים
+                                    מותאמים
+                                    אישית עם עומק וקצוות לכל סוגי העץ.</p>
+                                <img src="https://imgur.com/KaphcoZ.png" alt="דלתות" class="pack-img">
+                            </div>
+
+                            <!-- Feature 2: Menus -->
+                            <div class="glass-card pack-feature-card" data-aos="fade-up" data-aos-delay="100">
+                                <h3 style="color: var(--color-primary-light);">🖥️ ממשק נקי</h3>
+                                <p style="color: var(--color-text-secondary);">רענון התפריטים – טקסטורות מעודכנים עבור
+                                    שולחן
+                                    יצירה, תנור, סדן, ועוד.</p>
+                                <img src="https://imgur.com/vywt971.png" alt="תפריטים" class="pack-img">
+                            </div>
+
+                            <!-- Feature 3: Nature & Fixes -->
+                            <div class="glass-card pack-feature-card" data-aos="fade-up" data-aos-delay="200">
+                                <h3 style="color: var(--color-primary-light);">🌿 טבע ותיקונים</h3>
+                                <ul class="feature-list">
+                                    <li>תנועת צמחים עדינה (שימוש בשיידרים פנימיים)</li>
+                                    <li>תיקוני מודלים לפטריות, גפנים, ומוט קצה</li>
+                                    <li>עיצוב מחדש של שמש וירח</li>
+                                    <li>צליל סודי לשימוש טוטם</li>
+                                </ul>
+                                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top: auto;">
+                                    <img src="https://imgur.com/LiNIHx2.png" alt="שמש" class="pack-img"
+                                        style="border-radius: 8px; height: 150px; object-fit: cover;">
+                                    <img src="https://imgur.com/By2wXBn.png" alt="ירח" class="pack-img"
+                                        style="border-radius: 8px; height: 150px; object-fit: cover;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Feature 4: Secret (Centered outside grid) -->
+                        <div style="max-width: 600px; margin: 2rem auto;">
+                            <div class="glass-card pack-feature-card" data-aos="fade-up" data-aos-delay="300"
+                                style="justify-content:center; align-items:center; text-align:center;">
+                                <span style="font-size: 3rem;">🤫</span>
+                                <h3 style="color: var(--color-primary-light);">עיצוב סודי</h3>
+                                <p>נסו להציב מוט קצה (End Rod) על הראש ולראות מה קורה...</p>
+                            </div>
+                        </div>
+
+                        <div class="glass-card download-zone" data-aos="fade-up">
+                            <h2 style="color: var(--color-primary-light); margin-bottom: 1.5rem;">להורדת הטקסטורה</h2>
+                            <br>
+                            <a href="https://www.dropbox.com/scl/fi/p9r0h26l3ncdmevzrb8dl/4-lMoshko-Texture.zip?rlkey=1otgsow4w2coxijuje5t1rw3w&st=7y8ar9z2&dl=1"
+                                class="btn btn-primary btn-lg" target="_blank"
+                                style="padding: 1rem 3rem; font-size: 1.2rem;">
+                                ⬇️ לחץ כאן ⬇️
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <!-- populated by shared.js -->
+    </footer>
+
+    <div id="ragdoll-container"></div>
+    <div class="skin-control-panel">
+        <input type="text" id="skin-username" placeholder="Minecraft Username" value="">
+        <button onclick="changeSkin(document.getElementById('skin-username').value)">Change Skin</button>
+        <button onclick="resetRagdoll()" style="background: #e74c3c;">Reset</button>
+    </div>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="shared.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
