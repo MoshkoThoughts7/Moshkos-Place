@@ -1,36 +1,33 @@
 /**
- * DRAGON 2048 - Retro Arcade Edition
+ * DRAGON 2048
  */
 window.load2048 = function (el, autoStart = true) {
+    if (!document.getElementById('game-theme-css')) {
+        const basePath = window.location.pathname.includes('/pages/') ? '../' : './';
+        const link = document.createElement('link');
+        link.id = 'game-theme-css'; link.rel = 'stylesheet';
+        link.href = basePath + 'design/game-theme.css';
+        document.head.appendChild(link);
+    }
     el.innerHTML = `
-        <div class="game-container glass-card" style="background: rgba(10, 10, 20, 0.95); padding: 20px; border-radius: 20px; border: 1px solid rgba(139, 92, 246, 0.3);">
-            <div class="game-instructions" style="margin-bottom: 15px; color: #a78bfa; font-family: 'Orbitron'; font-size: 0.8rem;">
-                💎 DRAGON 2048 - Combine brews to reach the Golden Dragon!
+        <div class="game-wrapper">
+            <div class="game-title-label">💎 DRAGON 2048 — Combine tiles to reach the Golden Dragon!</div>
+            <div class="game-hud">
+                <div class="game-hud-stat">SCORE: <span id="2048-score">0</span></div>
+                <div class="game-hud-hint">ARROW KEYS / WASD</div>
             </div>
-            <div class="game-header" style="display: flex; justify-content: space-between; margin-bottom: 15px; font-family: 'Orbitron'; font-size: 1.1rem;">
-                <span style="color: #6366f1;">SCORE: <span id="2048-score">0</span></span>
-                <span style="color: #ec4899;">ARROW KEYS / WASD</span>
-            </div>
-            <div id="grid-2048-container" style="position: relative; overflow: hidden; border-radius: 15px; border: 2px solid rgba(139, 92, 246, 0.3); padding: 10px; background: #020205; box-shadow: inset 0 0 20px rgba(139, 92, 246, 0.2);">
-                <div id="grid-2048" style="
-                    display: block; 
-                    position: relative; 
-                    width: 300px; 
-                    height: 300px; 
-                    margin: auto; 
-                    box-sizing: border-box;">
-                </div>
-                <div id="game-over-2048" style="display: none; position: absolute; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.85); z-index: 100; flex-direction: column; align-items: center; justify-content: center; font-family: 'Orbitron';">
-                    <h2 style="color: #ff00ea; font-size: 32px; margin-bottom: 10px;">GRID LOCKED</h2>
+            <div id="grid-2048-container" style="position: relative; overflow: hidden; border-radius: 12px; border: 1px solid rgba(139, 92, 246, 0.25); padding: 10px; background: #02010a; box-shadow: inset 0 0 20px rgba(139, 92, 246, 0.15);">
+                <div id="grid-2048" style="display: block; position: relative; width: 300px; height: 300px; margin: auto; box-sizing: border-box;"></div>
+                <div id="game-over-2048" style="display: none; position: absolute; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.9); z-index: 100; flex-direction: column; align-items: center; justify-content: center; font-family: 'Orbitron'; border-radius: 12px;">
+                    <h2 style="color: #EC4899; font-size: 28px; margin-bottom: 10px;">GRID LOCKED</h2>
                     <p style="color: #fff; font-size: 18px; margin-bottom: 20px;">FINAL SCORE: <span id="final-score-2048">0</span></p>
-                    <p style="color: #a78bfa; font-size: 14px;">RESTART TO CONTINUE</p>
+                    <p style="color: #a78bfa; font-size: 12px; letter-spacing: 0.1em;">RESTART TO CONTINUE</p>
                 </div>
-                <!-- Scanline Effect -->
-                <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02)); background-size: 100% 4px, 3px 100%; z-index: 50;"></div>
+                <div class="game-scanlines"></div>
             </div>
-            <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 20px;">
-                <button id="restart2048" class="btn btn-primary" style="min-width: 150px; font-family: 'Orbitron';">RESTART</button>
-                <button class="btn btn-secondary" onclick="window.loadGame(null)" style="min-width: 150px; font-family: 'Orbitron';">CLOSE</button>
+            <div class="game-controls">
+                <button id="restart2048" class="btn btn-primary">RESTART</button>
+                <button class="btn btn-secondary" onclick="window.loadGame(null)">CLOSE</button>
             </div>
         </div>`;
 

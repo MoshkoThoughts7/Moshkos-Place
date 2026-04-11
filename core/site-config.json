@@ -1,8 +1,8 @@
-﻿{
+{
     "site": {
-        "title": "MOSHKO'S - Home",
-        "description": "MOSHKO'S - Epic Games & Minecraft Adventures",
-        "copyright": "© MOSHKO'S - All rights reserved.",
+        "title": "Moshko's Core - Home",
+        "description": "Moshko's Core - Epic Games & Minecraft Adventures",
+        "copyright": "© Moshko's Core - All rights reserved.",
         "footerCredits": "Created By Moshko"
     },
     "navigation": {
@@ -13,22 +13,66 @@
     },
     "contact": {
         "title": "🔗 Contact Info",
-        "discord": "Discord",
-        "instagram": "Instagram",
-        "email_general": "moshkosha@gmail.com",
-        "email_events": "moshko@parlagames.co.il",
-        "namemc": "NameMC",
-        "steam": "Steam",
-        "spotify": "Spotify"
+        "dropdownLinks": [
+            {
+                "label": "Discord",
+                "type": "link",
+                "url": "https://discord.com/users/538697561209307136",
+                "icon": "images/icons/discord.svg",
+                "cssClass": "discord"
+            },
+            {
+                "label": "Instagram",
+                "type": "link",
+                "url": "https://instagram.com/shaharmoshko_",
+                "icon": "images/icons/instagram.svg",
+                "cssClass": "instagram"
+            },
+            {
+                "label": "moshkosha@gmail.com",
+                "type": "email",
+                "address": "moshkosha@gmail.com",
+                "icon": "images/icons/gmail.svg",
+                "cssClass": "email-general"
+            },
+            {
+                "label": "moshko@parlagames.co.il",
+                "type": "email",
+                "address": "moshko@parlagames.co.il",
+                "icon": "images/icons/gmail.svg",
+                "cssClass": "email-events"
+            },
+            {
+                "label": "NameMC",
+                "type": "link",
+                "url": "https://namemc.com/profile/MoshkoThoughts_",
+                "icon": "images/icons/namemc.jpg",
+                "cssClass": "namemc"
+            },
+            {
+                "label": "Steam",
+                "type": "link",
+                "url": "https://steamcommunity.com/profiles/76561199103335898/",
+                "icon": "images/icons/steam.svg",
+                "cssClass": "steam"
+            },
+            {
+                "label": "Spotify",
+                "type": "link",
+                "url": "https://open.spotify.com/user/zb1x4pnjevbxccyuykcv3kdnn?si=eb4c632fea114c95",
+                "icon": "images/icons/spotify.svg",
+                "cssClass": "spotify"
+            }
+        ]
     },
     "hero": {
-        "title": "Welcome to MOSHKO'S",
-        "subtitle": "The Ultimate Hub for Cosmic Games, Minecraft Packs, and Dragon-Themed Adventures",
+        "title": "Welcome to Moshko's Core",
+        "subtitle": "Moshko's Core - A place where ideas come to life!",
         "btnPlay": "Play Games",
         "btnExplore": "Explore Minecraft"
     },
     "about": {
-        "title": "קצת עלי",
+        "title": "About me",
         "bio": [
             "בישול ושהייה בים הם הדרכים האהובות עליי להירגע ולהטעין מצברים. התחביבים האלו מעניקים לי את המרחב האישי שבו אני יכול להתמקד בעצמי ולחבר בין שלווה ליצירתיות.",
             "אני משחק במיינקראפט כבר 12 שנים, וב-4 השנים האחרונות צברתי ניסיון בתפקידי צוות שונים בקהילת הפרלמנטום. כיום אני סגן אחראי בשרת הדיסקורד של הקהילה, אחראי על תכנון אירועים וניהול שוטף.",
@@ -36,7 +80,7 @@
         ]
     },
     "quickLinks": {
-        "title": "Explore Moshko's",
+        "title": "Explore Moshko's Core",
         "updates": {
             "title": "Latest Updates",
             "desc": "Stay current with new games, features, and community news"
@@ -111,6 +155,7 @@
     "updates": [
         {
             "id": 1,
+            "version": "v1.9.0",
             "icon": "🚀",
             "title": "Site Relaunch",
             "desc": "The new cosmic hub is officially live!",
@@ -118,6 +163,7 @@
         },
         {
             "id": 2,
+            "version": "v1.8.2",
             "icon": "🎮",
             "title": "New Games Added",
             "desc": "Treasure Hunt and Bottle Flip are now playable.",

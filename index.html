@@ -4,13 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="MOSHKO'S - Epic Games & Minecraft Adventures">
-    <title>MOSHKO'S - Home</title>
-    <link rel="stylesheet" href="style.css">
+    <meta name="description" content="Moshko's Core - Epic Games & Minecraft Adventures!">
+    <title>Moshko's Core - Home</title>
+    <link rel="stylesheet" href="design/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&family=Assistant:wght@400;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
     <!-- AOS Library -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
@@ -26,8 +26,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cannon.js/0.6.2/cannon.min.js"></script>
 
     <!-- App Logic -->
-    <script src="ragdoll_physics.js"></script>
-    <script src="ragdoll_background.js"></script>
+    <script src="ragdoll/ragdoll_physics.js"></script>
+    <script src="ragdoll/ragdoll_background.js"></script>
 
     <!-- Navigation -->
     <nav class="navbar" id="navbar">
@@ -42,55 +42,27 @@
             <section class="hero">
                 <div class="hero-content">
                     <div class="hero-logo-wrapper" data-aos="zoom-in">
-                        <img src="images/logo.png" alt="MOSHKO'S" class="hero-logo">
+                        <img src="images/logo.png" alt="Moshko's Core" class="hero-logo">
                     </div>
-                    <h1 class="hero-title" data-aos="zoom-in">Welcome to MOSHKO'S PLACE</h1>
-                    <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="200">Welcome to my place!</p>
-
+                    <h1 class="hero-title" data-aos="zoom-in">Welcome to Moshko's Core!</h1>
+                    <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="200" id="dynHeroSubtitle">Moshko's Core - A place where ideas come to life!</p>
                     <div class="hero-buttons">
-                        <a href="games.html" class="btn btn-primary">Play Games</a>
-                        <a href="minecraft.html" class="btn btn-primary">Explore Minecraft</a>
+                        <a href="pages/minecraft.html" class="btn btn-primary">Explore Minecraft</a>
+                        <a href="pages/games.html" class="btn btn-primary">Play Games</a>
                     </div>
                 </div>
-
             </section>
 
             <!-- About Section (Source: Google Sites) -->
             <section id="about" class="section about-section">
                 <div class="container">
-                    <h2 class="section-title" data-aos="fade-up">&#1511;&#1510;&#1514; &#1506;&#1500;&#1497;</h2>
-                    <div class="bio-single-column rtl" data-aos="fade-up" dir="rtl">
+                    <h2 class="section-title" data-aos="fade-up">About Me</h2>
+                    <div class="bio-single-column" data-aos="fade-up">
                         <div class="bio-card glass-card highlight-border" id="bioContent">
-                            <div style="font-size: 3rem; text-align: center; margin-bottom: 1.5rem;"></div>
-                            <p>&#1489;&#1497;&#1513;&#1493;&#1500; &#1493;&#1513;&#1492;&#1497;&#1497;&#1492; &#1489;&#1497;&#1501; &#1492;&#1501; &#1492;&#1491;&#1512;&#1499;&#1497;&#1501; &#1492;&#1488;&#1492;&#1493;&#1489;&#1493;&#1514; &#1506;&#1500;&#1497;&#1497; &#1500;&#1492;&#1497;&#1512;&#1490;&#1506; &#1493;&#1500;&#1492;&#1496;&#1506;&#1497;&#1503; &#1502;&#1510;&#1489;&#1512;&#1497;&#1501;. &#1492;&#1514;&#1495;&#1489;&#1497;&#1489;&#1497;&#1501; &#1492;&#1488;&#1500;&#1493; &#1502;&#1506;&#1504;&#1497;&#1511;&#1497;&#1501; &#1500;&#1497; &#1488;&#1514; &#1492;&#1502;&#1512;&#1495;&#1489; &#1492;&#1488;&#1497;&#1513;&#1497; &#1513;&#1489;&#1493; &#1488;&#1504;&#1497; &#1497;&#1499;&#1493;&#1500; &#1500;&#1492;&#1514;&#1502;&#1511;&#1491; &#1489;&#1506;&#1510;&#1502;&#1497; &#1493;&#1500;&#1495;&#1489;&#1512; &#1489;&#1497;&#1503; &#1513;&#1500;&#1493;&#1493;&#1492; &#1500;&#1497;&#1510;&#1497;&#1512;&#1514;&#1497;&#1493;&#1514;.</p>
-                            <p>&#1488;&#1504;&#1497; &#1502;&#1513;&#1495;&#1511; &#1489;&#1502;&#1497;&#1497;&#1504;&#1511;&#1512;&#1488;&#1508;&#1496; &#1499;&#1489;&#1512; 12 &#1513;&#1504;&#1497;&#1501;, &#1493;&#1489;-4 &#1492;&#1513;&#1504;&#1497;&#1501; &#1492;&#1488;&#1495;&#1512;&#1493;&#1504;&#1493;&#1514; &#1510;&#1489;&#1512;&#1514;&#1497; &#1504;&#1497;&#1505;&#1497;&#1493;&#1503; &#1489;&#1514;&#1508;&#1511;&#1497;&#1491;&#1497; &#1510;&#1493;&#1493;&#1514; &#1513;&#1493;&#1504;&#1497;&#1501; &#1489;&#1511;&#1492;&#1497;&#1500;&#1514; &#1492;&#1508;&#1512;&#1500;&#1502;&#1504;&#1496;&#1493;&#1501;. &#1499;&#1497;&#1493;&#1501; &#1488;&#1504;&#1497; &#1505;&#1490;&#1503; &#1488;&#1495;&#1512;&#1488;&#1497; &#1489;&#1513;&#1512;&#1514; &#1492;&#1491;&#1497;&#1505;&#1511;&#1493;&#1512;&#1491; &#1513;&#1500; &#1492;&#1511;&#1492;&#1497;&#1500;&#1492;, &#1488;&#1495;&#1512;&#1488;&#1497; &#1506;&#1500; &#1514;&#1499;&#1504;&#1493;&#1503; &#1488;&#1497;&#1512;&#1493;&#1506;&#1497;&#1501; &#1493;&#1504;&#1497;&#1492;&#1493;&#1500; &#1513;&#1493;&#1496;&#1507;.</p>
-                            <p>&#1489;&#1504;&#1493;&#1505;&#1507;, &#1488;&#1504;&#1497; &#1502;&#1514;&#1502;&#1495;&#1492; &#1489;&#1489;&#1504;&#1497;&#1497;&#1492; &#1493;&#1504;&#1497;&#1492;&#1493;&#1500; &#1513;&#1512;&#1514;&#1497; &#1491;&#1497;&#1505;&#1511;&#1493;&#1512;&#1491; &#1502;&#1511;&#1510;&#1493;&#1506;&#1497;&#1497;&#1501;, &#1499;&#1493;&#1500;&#1500; &#1506;&#1497;&#1510;&#1493;&#1489; &#1493;&#1492;&#1514;&#1488;&#1502;&#1492; &#1488;&#1497;&#1513;&#1497;&#1514;. &#1488;&#1504;&#1497; &#1502;&#1513;&#1500;&#1489; &#1497;&#1510;&#1497;&#1512;&#1514;&#1497;&#1493;&#1514; &#1493;&#1504;&#1497;&#1492;&#1493;&#1500; &#1499;&#1491;&#1497; &#1500;&#1492;&#1489;&#1497;&#1488; &#1506;&#1512;&#1498; &#1500;&#1511;&#1492;&#1497;&#1500;&#1493;&#1514; &#1513;&#1488;&#1504;&#1497; &#1495;&#1500;&#1511; &#1502;&#1492;&#1503;.</p>
+                            <p>Cooking and chilling at the beach are my favorite ways to relax and recharge. These hobbies grant me the personal space where I can focus on myself and bridge tranquility with creativity.</p>
+                            <p>I have been playing Minecraft for 12 years, and for the past 4 years, I have gained experience in various staff roles within the Parlamentum community. Currently, I am the Deputy Manager of the community's Discord server, responsible for event planning and day-to-day management.</p>
+                            <p>In addition, I specialize in building and managing professional Discord servers, including design and customization. I combine creativity and management to bring value to the communities I am a part of.</p>
                         </div>
-                    </div>
-                </div>
-            </section>
-
-
-            <!-- Quick Links Section -->
-            <section class="section quick-links-section">
-                <div class="container">
-                    <h2 class="section-title" data-aos="fade-up">Explore Moshko's</h2>
-                    <div class="quick-links-grid">
-                        <a href="updates.html" class="quick-link-card" data-aos="zoom-in" data-aos-delay="100">
-                            <div class="quick-link-icon">&#128640;</div>
-                            <h3>Latest Updates</h3>
-                            <p>Stay current with new features and updates!</p>
-                        </a>
-                        <a href="games.html" class="quick-link-card" data-aos="zoom-in" data-aos-delay="200">
-                            <div class="quick-link-icon">&#127918;</div>
-                            <h3>Play Games</h3>
-                            <p>8 cool games to pass the time!</p>
-                        </a>
-                        <a href="minecraft.html" class="quick-link-card" data-aos="zoom-in" data-aos-delay="300">
-                            <div class="quick-link-icon">&#128142;</div>
-                            <h3>Minecraft</h3>
-                            <p>Custom packs and amazing builds!</p>
-                        </a>
                     </div>
                 </div>
             </section>
@@ -110,8 +82,11 @@
     </div>
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script src="shared.js"></script>
-    <script src="script.js"></script>
+    <script src="data/info_data.js"></script>
+    <script src="data/updates_data.js"></script>
+    <script src="core/shared.js"></script>
+    <script src="core/script.js"></script>
+    <script src="core/sounds.js?v=20"></script>
 </body>
 
 </html>

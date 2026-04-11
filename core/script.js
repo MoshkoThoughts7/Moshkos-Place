@@ -413,6 +413,9 @@ window.loadGame = function (id, autoStart = true) {
     const gameConfig = gameMap[id];
 
     if (gameConfig) {
+        // Compute base path relative to current page location
+        const basePath = window.location.pathname.includes('/pages/') ? '../' : './';
+
         // Check if script is already loaded
         const scriptId = `script-game-${id}`;
         if (document.getElementById(scriptId)) {
@@ -422,7 +425,7 @@ window.loadGame = function (id, autoStart = true) {
         } else {
             const script = document.createElement('script');
             script.id = scriptId;
-            script.src = gameConfig.file;
+            script.src = basePath + gameConfig.file;
             script.onload = () => {
                 if (typeof window[gameConfig.func] === 'function') {
                     window[gameConfig.func](area, autoStart);
@@ -578,7 +581,8 @@ async function loadSiteContent() {
         if (!window.siteConfig) {
             console.warn('siteConfig not found, falling back to fetch...');
             try {
-                const response = await fetch('site-config.json');
+                const basePath = window.location.pathname.includes('/pages/') ? '../' : './';
+                const response = await fetch(basePath + 'core/site-config.json');
                 if (response.ok) window.siteConfig = await response.json();
             } catch (e) {
                 console.error('Fetch fallback failed:', e);
@@ -677,18 +681,50 @@ async function loadSiteContent() {
 
 async function loadUpdates() {
     const container = document.getElementById('updatesContainer');
-    if (!container || !window.siteConfig || !window.siteConfig.updates) return;
+    if (!container) return;
+
+    // Preference: Use global UPDATES_DATA (from updates_data.js) if available
+    const rawUpdates = window.UPDATES_DATA || (window.siteConfig ? window.siteConfig.updates : []);
+    if (!rawUpdates || rawUpdates.length === 0) return;
 
     const isHomePage = window.location.pathname.includes('home.html') || window.location.pathname.endsWith('/') || window.location.pathname === '';
-    const updates = isHomePage ? window.siteConfig.updates.slice(0, 3) : window.siteConfig.updates;
+    
+    // Explicitly sort by order/date, using array order as a tie-breaker
+    const config = window.UPDATES_CONFIG || { sortOrder: 'desc' };
+    const sortedUpdates = [...rawUpdates]
+        .map((u, i) => ({ ...u, _index: i }))
+        .sort((a, b) => {
+            const isDesc = config.sortOrder === 'desc';
+            
+            // 1. Manual Order Priority (e.g., if 1 is oldest, then in 'desc' mode highest order comes first)
+            if (a.order !== undefined && b.order !== undefined) {
+                return isDesc ? b.order - a.order : a.order - b.order;
+            }
+            if (a.order !== undefined) return isDesc ? -1 : 1;
+            if (b.order !== undefined) return isDesc ? 1 : -1;
+
+            // 2. Date Sort
+            const dateA = new Date(a.date);
+            const dateB = new Date(b.date);
+            
+            let dateDiff = isDesc ? dateB - dateA : dateA - dateB;
+            
+            // 3. Fallback: Array Index
+            return dateDiff !== 0 ? dateDiff : a._index - b._index;
+        });
+        
+    const updates = isHomePage ? sortedUpdates.slice(0, 3) : sortedUpdates;
 
     container.innerHTML = updates.map(update => `
         <div class="update-card glass-card" data-aos="fade-up">
             <div class="update-icon">${update.icon}</div>
             <div class="update-content">
-                <span class="update-date">${update.date}</span>
                 <h3>${update.title}</h3>
-                <p>${update.desc}</p>
+                <div class="update-meta">
+                    <span class="update-version">${update.version || ''}</span>
+                    <span class="update-date">${update.date}</span>
+                </div>
+                <p>${update.desc || update.description}</p>
                 <a href="updates.html" class="btn btn-primary btn-sm">Read More</a>
             </div>
         </div>
@@ -723,7 +759,7 @@ function populateMinecraftContent() {
     const title = document.getElementById('dynMinecraftTitle');
     const subtitle = document.getElementById('dynMinecraftSubtitle');
     if (title) title.textContent = "Minecraft World";
-    if (subtitle) subtitle.textContent = "Custom packs and amazing builds from the Moshko universe";
+    if (subtitle) subtitle.textContent = "Custom packs and amazing builds from Moshko's Core";
 
     const packTitle = document.getElementById('dynPackTitle');
     const packDesc = document.getElementById('dynPackDesc');
@@ -765,3 +801,138 @@ window.sendGmail = function (email, btn) {
 }
 
 console.log('%c🎮 MOSHKO\'S 🎮', 'font-size: 20px; color: #8B5CF6;');
+
+// ========================================
+// Cool Modern Custom Mouse
+// ========================================
+function initCoolMouse() {
+    const style = document.createElement('style');
+    style.innerHTML = `
+        * { cursor: none !important; }
+
+        /* ── Crosshair center ── */
+        .cool-mouse-dot {
+            width: 9px;
+            height: 9px;
+            background: radial-gradient(circle, #fff 20%, #EC4899 80%);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 2147483648 !important;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 10px #EC4899, 0 0 22px rgba(139, 92, 246, 0.9);
+            /* No transition - instant snap to cursor for zero-lag feel */
+        }
+        /* Horizontal tick marks */
+        .cool-mouse-dot::before {
+            content: '';
+            position: absolute;
+            width: 22px; height: 2px;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(90deg, #8B5CF6, transparent 28%, transparent 72%, #8B5CF6);
+        }
+        /* Vertical tick marks */
+        .cool-mouse-dot::after {
+            content: '';
+            position: absolute;
+            width: 2px; height: 22px;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(180deg, #8B5CF6, transparent 28%, transparent 72%, #8B5CF6);
+        }
+
+        /* ── Outer rotating ring ── */
+        .cool-mouse-ring {
+            width: 42px; height: 42px;
+            border: 2px dashed rgba(139, 92, 246, 0.7);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 2147483647 !important;
+            transform: translate(-50%, -50%);
+            transition: width 0.15s, height 0.15s, border-color 0.15s, box-shadow 0.15s;
+            animation: cursor-spin 4s linear infinite;
+            box-shadow: 0 0 8px rgba(139, 92, 246, 0.3);
+        }
+        @keyframes cursor-spin {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to   { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* Hover states */
+        .cool-mouse-dot.hovering {
+            width: 12px; height: 12px;
+            box-shadow: 0 0 16px #EC4899, 0 0 36px rgba(139, 92, 246, 0.9);
+        }
+        .cool-mouse-ring.hovering {
+            width: 58px; height: 58px;
+            border-color: rgba(236, 72, 153, 0.85);
+            border-style: solid;
+            box-shadow: 0 0 16px rgba(236, 72, 153, 0.45);
+            animation: cursor-spin 1.5s linear infinite;
+        }
+    `;
+    document.head.appendChild(style);
+
+    const dot = document.createElement('div');
+    dot.className = 'cool-mouse-dot';
+    const ring = document.createElement('div');
+    ring.className = 'cool-mouse-ring';
+
+    function ensureCursorOnTop() {
+        // Always keep cursor as last DOM siblings so they paint over everything
+        if (document.body.lastChild !== ring) {
+            document.body.appendChild(dot);
+            document.body.appendChild(ring);
+        }
+    }
+
+    document.body.appendChild(dot);
+    document.body.appendChild(ring);
+
+    // Watch for any new elements being injected (ragdoll canvas, etc) and push cursor back on top
+    const observer = new MutationObserver(() => {
+        if (document.body.lastChild !== ring) {
+            document.body.appendChild(dot);
+            document.body.appendChild(ring);
+        }
+    });
+    observer.observe(document.body, { childList: true });
+
+    let mouseX = window.innerWidth / 2;
+    let mouseY = window.innerHeight / 2;
+    let ringX = mouseX;
+    let ringY = mouseY;
+
+    window.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        dot.style.left = mouseX + 'px';
+        dot.style.top = mouseY + 'px';
+    });
+
+    function renderRing() {
+        ringX += (mouseX - ringX) * 0.6;
+        ringY += (mouseY - ringY) * 0.6;
+        ring.style.left = ringX + 'px';
+        ring.style.top = ringY + 'px';
+        requestAnimationFrame(renderRing);
+    }
+    renderRing();
+
+    document.addEventListener('mouseover', (e) => {
+        if (!e.target || typeof e.target.closest !== 'function') return;
+        if (e.target.closest('a') || e.target.closest('button') || e.target.closest('[role="button"]') || e.target.closest('.game-card') || e.target.closest('input')) {
+            dot.classList.add('hovering');
+            ring.classList.add('hovering');
+        } else {
+            dot.classList.remove('hovering');
+            ring.classList.remove('hovering');
+        }
+    });
+}
+document.addEventListener('DOMContentLoaded', initCoolMouse);
+window.addEventListener('page-load', () => {
+    if (!document.querySelector('.cool-mouse-dot')) initCoolMouse();
+});

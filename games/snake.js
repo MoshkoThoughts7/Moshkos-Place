@@ -1,23 +1,28 @@
 /**
- * COSMIC SNAKE GAME - Retro Arcade Edition
+ * COSMIC SNAKE GAME
  */
 window.loadSnake = function (el, autoStart = true) {
+    if (!document.getElementById('game-theme-css')) {
+        const basePath = window.location.pathname.includes('/pages/') ? '../' : './';
+        const link = document.createElement('link');
+        link.id = 'game-theme-css'; link.rel = 'stylesheet';
+        link.href = basePath + 'design/game-theme.css';
+        document.head.appendChild(link);
+    }
     el.innerHTML = `
-        <div class="game-container glass-card" style="background: rgba(10, 10, 20, 0.95); padding: 20px; border-radius: 20px; border: 1px solid rgba(139, 92, 246, 0.3);">
-            <div class="game-instructions" style="margin-bottom: 10px; color: #a78bfa; font-family: 'Orbitron'; font-size: 0.8rem;">
-                🐲 COSMIC SNAKE - Collect Beer Mugs, grow your tail!
+        <div class="game-wrapper">
+            <div class="game-title-label">🐲 COSMIC SNAKE — Collect Beer Mugs, grow your tail!</div>
+            <div class="game-hud">
+                <div class="game-hud-stat">MUGS: <span id="ss">0</span></div>
+                <div class="game-hud-hint">ARROW KEYS / WASD</div>
             </div>
-            <div class="game-header" style="display: flex; justify-content: space-between; margin-bottom: 10px; font-family: 'Orbitron';">
-                <span style="color: #6366f1;">MUGS: <span id="ss">0</span></span>
-                <span style="color: #ec4899;">ARROW KEYS / WASD</span>
+            <div class="game-canvas-wrap">
+                <canvas id="sc" width="400" height="400" style="cursor: none;"></canvas>
+                <div class="game-scanlines"></div>
             </div>
-            <div style="position: relative; overflow: hidden; border-radius: 15px; border: 2px solid rgba(255,255,255,0.05);">
-                <canvas id="sc" width="400" height="400" style="background: #020205; display: block; margin: auto; cursor: none;"></canvas>
-                <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02)); background-size: 100% 4px, 3px 100%; z-index: 5;"></div>
-            </div>
-            <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 15px;">
-                <button id="restartSnakeBtn" class="btn btn-primary" style="min-width: 150px; font-family: 'Orbitron';">RESTART</button>
-                <button class="btn btn-secondary" onclick="window.loadGame(null)" style="min-width: 150px; font-family: 'Orbitron';">CLOSE</button>
+            <div class="game-controls">
+                <button id="restartSnakeBtn" class="btn btn-primary">RESTART</button>
+                <button class="btn btn-secondary" onclick="window.loadGame(null)">CLOSE</button>
             </div>
         </div>`;
 

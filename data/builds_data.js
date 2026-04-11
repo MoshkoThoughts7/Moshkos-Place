@@ -25,9 +25,18 @@ function renderBuilds() {
     const gallery = document.querySelector('.minecraft-gallery');
     if (!gallery) return;
 
-    gallery.innerHTML = buildsData.map(build => `
+    // Resolve correct base path so images work from both root, pages/ dir, and pages/minecraft/ dir
+    const normalizedPath = window.location.pathname.replace(/\\/g, '/');
+    let imgBase = './';
+    if (normalizedPath.includes('/pages/minecraft/')) {
+        imgBase = '../../';
+    } else if (normalizedPath.includes('/pages/')) {
+        imgBase = '../';
+    }
+
+    gallery.innerHTML = [...buildsData].reverse().map(build => `
         <div class="gallery-item glass-card" data-aos="fade-up" style="flex: 0 1 30%; min-width: 320px; padding: 10px !important; overflow: hidden; display: flex; flex-direction: column; align-self: flex-start;">
-            <img src="${build.image}" alt="${build.title}" style="width: 100%; height: auto; border-radius: 12px; display: block;">
+            <img src="${imgBase}${build.image}" alt="${build.title}" style="width: 100%; height: auto; border-radius: 12px; display: block;">
             <div class="gallery-overlay">
                 <h3>${build.title}</h3>
                 <p>${build.description}</p>

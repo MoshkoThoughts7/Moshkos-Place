@@ -1,36 +1,29 @@
 /**
- * DRAGON BREATH GAME - Space Invaders Arcade Edition
+ * DRAGON BREATH — Space Invaders
  */
 window.loadBreath = function (el, autoStart = true) {
+    if (!document.getElementById('game-theme-css')) {
+        const basePath = window.location.pathname.includes('/pages/') ? '../' : './';
+        const link = document.createElement('link');
+        link.id = 'game-theme-css'; link.rel = 'stylesheet';
+        link.href = basePath + 'design/game-theme.css';
+        document.head.appendChild(link);
+    }
     el.innerHTML = `
-        <div class="game-container glass-card" style="background: rgba(10, 10, 20, 0.95); padding: 20px; border-radius: 20px; border: 1px solid rgba(139, 92, 246, 0.3); box-shadow: 0 0 30px rgba(139, 92, 246, 0.1);">
-            <div class="game-instructions" style="margin-bottom: 15px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 10px; color: #a78bfa; font-size: 0.85rem; border-left: 3px solid #6366f1; font-family: 'Orbitron';">
-                👾 DRAGON BREATH - Defend the brewery with cosmic fire! • A/D or MOUSE to move • SPACE or CLICK to fire
+        <div class="game-wrapper">
+            <div class="game-title-label">👾 DRAGON BREATH — Defend the brewery with cosmic fire!</div>
+            <div class="game-hud">
+                <div class="game-hud-stat">SCORE: <span id="breath-score">0</span></div>
+                <div class="game-hud-hint">A/D + SPACE / MOUSE + CLICK</div>
+                <div class="game-hud-stat">WAVE: <span id="breath-wave">1</span></div>
             </div>
-            
-            <div class="game-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding: 10px; background: rgba(0,0,0,0.4); border-radius: 10px; border: 1px solid rgba(255,255,255,0.05);">
-                <div style="font-family: 'Orbitron'; font-size: 1.1rem; letter-spacing: 1px;">
-                    <span style="color: #6366f1; opacity: 0.8;">SCORE:</span> 
-                    <span id="breath-score" style="color: #fff; text-shadow: 0 0 10px #6366f1;">0</span>
-                </div>
-                <div style="font-family: 'Orbitron'; font-size: 1.1rem; letter-spacing: 1px;">
-                    <span style="color: #ec4899; opacity: 0.8;">WAVE:</span> 
-                    <span id="breath-wave" style="color: #fff; text-shadow: 0 0 10px #ec4899;">1</span>
-                </div>
+            <div class="game-canvas-wrap">
+                <canvas id="breath-canvas" width="500" height="500" style="cursor: none;"></canvas>
+                <div class="game-scanlines"></div>
             </div>
-
-            <div style="position: relative; overflow: hidden; border-radius: 15px; border: 2px solid rgba(255,255,255,0.05); box-shadow: inset 0 0 20px #000;">
-                <canvas id="breath-canvas" width="500" height="500" style="background: #020205; display: block; margin: auto; cursor: none;"></canvas>
-                <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03)); background-size: 100% 4px, 3px 100%; z-index: 5;"></div>
-            </div>
-
-            <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 20px;">
-                <button id="restartBreath" class="btn btn-primary" style="min-width: 180px; font-family: 'Orbitron'; font-weight: bold; font-size: 0.9rem; letter-spacing: 1px;">
-                    <i class="fas fa-redo" style="margin-right: 8px;"></i> RESTART
-                </button>
-                <button class="btn btn-secondary" onclick="window.loadGame(null)" style="min-width: 180px; font-family: 'Orbitron'; font-weight: bold; font-size: 0.9rem; letter-spacing: 1px;">
-                    <i class="fas fa-door-open" style="margin-right: 8px;"></i> ABORT MISSION
-                </button>
+            <div class="game-controls">
+                <button id="restartBreath" class="btn btn-primary">RESTART</button>
+                <button class="btn btn-secondary" onclick="window.loadGame(null)">ABORT MISSION</button>
             </div>
         </div>`;
 

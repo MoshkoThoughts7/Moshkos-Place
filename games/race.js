@@ -1,23 +1,28 @@
 /**
- * DRAGON WING RACE GAME - Arcade Synthwave Edition
+ * DRAGON WING RACE
  */
 window.loadRace = function (el, autoStart = true) {
+    if (!document.getElementById('game-theme-css')) {
+        const basePath = window.location.pathname.includes('/pages/') ? '../' : './';
+        const link = document.createElement('link');
+        link.id = 'game-theme-css'; link.rel = 'stylesheet';
+        link.href = basePath + 'design/game-theme.css';
+        document.head.appendChild(link);
+    }
     el.innerHTML = `
-        <div class="game-container glass-card" style="background: rgba(10, 10, 20, 0.95); padding: 20px; border-radius: 20px; border: 1px solid rgba(139, 92, 246, 0.3);">
-            <div class="game-instructions" style="margin-bottom: 10px; color: #a78bfa; font-family: 'Orbitron'; font-size: 0.8rem;">
-                🏎️ DRAGON WING RACE - High-speed arcade vector racing!
+        <div class="game-wrapper">
+            <div class="game-title-label">🏎️ DRAGON WING RACE — High-speed synthwave vector racing!</div>
+            <div class="game-hud">
+                <div class="game-hud-stat">SCORE: <span id="race-score">0</span></div>
+                <div class="game-hud-hint">← → ARROW KEYS</div>
             </div>
-            <div class="game-header" style="display: flex; justify-content: space-between; margin-bottom: 10px; font-family: 'Orbitron';">
-                <span style="color: #6366f1;">SCORE: <span id="race-score">0</span></span>
-                <span style="color: #ec4899;">LEFT / RIGHT</span>
+            <div class="game-canvas-wrap">
+                <canvas id="race-canvas" width="400" height="500"></canvas>
+                <div class="game-scanlines"></div>
             </div>
-            <div style="position: relative; overflow: hidden; border-radius: 15px; border: 2px solid rgba(255,255,255,0.05);">
-                <canvas id="race-canvas" width="400" height="500" style="background: #020205; display: block; margin: auto; border-radius: 10px;"></canvas>
-                <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02)); background-size: 100% 4px, 3px 100%; z-index: 5;"></div>
-            </div>
-            <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 15px;">
-                <button id="restartRace" class="btn btn-primary" style="min-width: 150px; font-family: 'Orbitron';">RESTART</button>
-                <button class="btn btn-secondary" onclick="window.loadGame(null)" style="min-width: 150px; font-family: 'Orbitron';">CLOSE</button>
+            <div class="game-controls">
+                <button id="restartRace" class="btn btn-primary">RESTART</button>
+                <button class="btn btn-secondary" onclick="window.loadGame(null)">CLOSE</button>
             </div>
         </div>`;
 
