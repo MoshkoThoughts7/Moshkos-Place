@@ -6,17 +6,6 @@ const UPDATES_CONFIG = {
 
 const UPDATES_DATA = [
     {
-        order: 8,
-        version: "v2.1.0",
-        date: "April 12, 2026",
-        date_he: "12 באפריל 2026",
-        icon: "💣",
-        title: "Grenades!",
-        title_he: "!רימונים",
-        description: "You can now throw grenades at the ragdoll! Press 'G' or use the button.",
-        description_he: "!'עכשיו אפשר לזרוק רימונים על בובת המיינקראפט! לחצו על 'G או על הכפתור"
-    },
-    {
         order: 7,
         version: "v2.0.3",
         date: "April 12, 2026",
