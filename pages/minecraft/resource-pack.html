@@ -85,6 +85,7 @@
     <!-- App Logic -->
     <script src="../../ragdoll/ragdoll_physics.js"></script>
     <script src="../../ragdoll/ragdoll_background.js"></script>
+    <script src="../../ragdoll/tnt.js"></script>
 
     <!-- Navigation -->
     <nav class="navbar" id="navbar">
@@ -96,10 +97,10 @@
             <!-- Header -->
             <section class="page-header">
                 <div class="container">
-                    <h1 class="page-title" data-aos="fade-up">Moshko's Resource Pack</h1>
-                    <p class="page-subtitle" data-aos="fade-up">Clean, Optimized, Vanilla-Friendly!</p>
+                    <h1 class="page-title" data-aos="fade-up" data-i18n="rp.title">Moshko's Resource Pack</h1>
+                    <p class="page-subtitle" data-aos="fade-up" data-i18n="rp.subtitle">Clean, Optimized, Vanilla-Friendly!</p>
                     <div style="margin-top: 2rem;" data-aos="fade-up" data-aos-delay="100">
-                        <a href="../minecraft.html" class="btn btn-primary">Back to Minecraft Page</a>
+                        <a href="../minecraft.html" class="btn btn-primary" data-i18n="rp.back">Back to Minecraft Page</a>
                     </div>
                 </div>
             </section>
@@ -107,46 +108,38 @@
             <!-- Main Content -->
             <section class="section">
                 <div class="container">
-                    <!-- ENGLISH CONTENT -->
                     <div class="glass-card" style="margin-bottom: 2rem;">
-                        <h2 class="section-title" style="margin-bottom: 1rem; font-size: 2rem;">Overview</h2>
-                        <p style="color: var(--color-text-secondary); line-height: 1.6;">A clean, lightweight resource
-                            pack that refreshes GUI menus, enhances block models (especially doors and trapdoors), and
-                            adds subtle vegetation animations using internal shaders—all while keeping the vanilla
-                            Minecraft feel.</p>
+                        <h2 class="section-title" style="margin-bottom: 1rem; font-size: 2rem;" data-i18n="rp.overview.title">Overview</h2>
+                        <p style="color: var(--color-text-secondary); line-height: 1.6;" data-i18n="rp.overview.desc">A clean, lightweight resource pack that refreshes GUI menus, enhances block models (especially doors and trapdoors), and adds subtle vegetation animations using internal shaders—all while keeping the vanilla Minecraft feel.</p>
                         <div style="margin-top: 1rem; display:flex; gap: 1rem; flex-wrap: wrap;">
-                            <span class="btn btn-secondary" style="font-size: 0.9rem; padding: 0.5rem 1rem;">Version:
-                                1.20-1.21.9</span>
-                            <span class="btn btn-secondary" style="font-size: 0.9rem; padding: 0.5rem 1rem;">Resolution:
-                                16x (Vanilla)</span>
+                            <span class="btn btn-secondary" style="font-size: 0.9rem; padding: 0.5rem 1rem;">Version: 1.20-1.21.9</span>
+                            <span class="btn btn-secondary" style="font-size: 0.9rem; padding: 0.5rem 1rem;">Resolution: 16x (Vanilla)</span>
                         </div>
                     </div>
 
                     <div class="pack-grid">
                         <!-- Feature 1: Doors -->
                         <div class="glass-card pack-feature-card" data-aos="fade-up">
-                            <h3 style="color: var(--color-primary-light);">🚪 Enhanced Doors</h3>
-                            <p style="color: var(--color-text-secondary);">Doors and trapdoors have been redesigned with
-                                custom 3D models and depth for all wood types.</p>
+                            <h3 style="color: var(--color-primary-light);" data-i18n="rp.feat.doors.title">🚪 Enhanced Doors</h3>
+                            <p style="color: var(--color-text-secondary);" data-i18n="rp.feat.doors.desc">Doors and trapdoors have been redesigned with custom 3D models and depth for all wood types.</p>
                             <img src="https://imgur.com/KaphcoZ.png" alt="Doors" class="pack-img">
                         </div>
 
                         <!-- Feature 2: Menus -->
                         <div class="glass-card pack-feature-card" data-aos="fade-up" data-aos-delay="100">
-                            <h3 style="color: var(--color-primary-light);">🖥️ Clean Interface</h3>
-                            <p style="color: var(--color-text-secondary);">Menu refresh—updated textures for Crafting
-                                Tables, Furnaces, Anvils, and more.</p>
+                            <h3 style="color: var(--color-primary-light);" data-i18n="rp.feat.menus.title">🖥️ Clean Interface</h3>
+                            <p style="color: var(--color-text-secondary);" data-i18n="rp.feat.menus.desc">Menu refresh—updated textures for Crafting Tables, Furnaces, Anvils, and more.</p>
                             <img src="https://imgur.com/vywt971.png" alt="Menus" class="pack-img">
                         </div>
 
                         <!-- Feature 3: Nature & Fixes -->
                         <div class="glass-card pack-feature-card" data-aos="fade-up" data-aos-delay="200">
-                            <h3 style="color: var(--color-primary-light);">🌿 Nature & Fixes</h3>
+                            <h3 style="color: var(--color-primary-light);" data-i18n="rp.feat.nature.title">🌿 Nature &amp; Fixes</h3>
                             <ul class="feature-list">
-                                <li>Subtle plant movement (Internal Shaders)</li>
-                                <li>Model fixes for Mushrooms, Vines, and End Rods</li>
-                                <li>Redesigned Sun & Moon</li>
-                                <li>Secret sound for Totem usage</li>
+                                <li data-i18n="rp.feat.nature.li1">Subtle plant movement (Internal Shaders)</li>
+                                <li data-i18n="rp.feat.nature.li2">Model fixes for Mushrooms, Vines, and End Rods</li>
+                                <li data-i18n="rp.feat.nature.li3">Redesigned Sun &amp; Moon</li>
+                                <li data-i18n="rp.feat.nature.li4">Secret sound for Totem usage</li>
                             </ul>
                             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top: auto;">
                                 <img src="https://imgur.com/LiNIHx2.png" alt="Sun" class="pack-img"
@@ -160,17 +153,16 @@
                         <div class="glass-card pack-feature-card" data-aos="fade-up" data-aos-delay="300"
                             style="justify-content:center; align-items:center; text-align:center;">
                             <span style="font-size: 3rem;">🤫</span>
-                            <h3 style="color: var(--color-primary-light);">Secret Feature</h3>
-                            <p>Try placing an End Rod on your head and see what happens...</p>
+                            <h3 style="color: var(--color-primary-light);" data-i18n="rp.feat.secret.title">Secret Feature</h3>
+                            <p data-i18n="rp.feat.secret.desc">Try placing an End Rod on your head and see what happens...</p>
                         </div>
                     </div>
 
                     <div class="glass-card download-zone" data-aos="fade-up">
-                        <h2 style="color: var(--color-primary-light); margin-bottom: 1.5rem;">Download Resource Pack
-                        </h2>
+                        <h2 style="color: var(--color-primary-light); margin-bottom: 1.5rem;" data-i18n="rp.download.title">Download Resource Pack</h2>
                         <a href="https://www.dropbox.com/scl/fi/p9r0h26l3ncdmevzrb8dl/4-lMoshko-Texture.zip?rlkey=1otgsow4w2coxijuje5t1rw3w&st=7y8ar9z2&dl=1"
                             class="btn btn-primary btn-lg" target="_blank"
-                            style="padding: 1rem 3rem; font-size: 1.2rem;">
+                            style="padding: 1rem 3rem; font-size: 1.2rem;" data-i18n="rp.download.btn">
                             ⬇️ Click Here ⬇️
                         </a>
                     </div>
@@ -186,13 +178,14 @@
 
     <div id="ragdoll-container"></div>
     <div class="skin-control-panel">
-        <input type="text" id="skin-username" placeholder="Minecraft Username" value="">
-        <button onclick="changeSkin(document.getElementById('skin-username').value)">Change Skin</button>
-        <button onclick="resetRagdoll()" style="background: #e74c3c;">Reset</button>
+        <input type="text" id="skin-username" placeholder="Minecraft Username" data-i18n="skin.placeholder" value="">
+        <button onclick="changeSkin(document.getElementById('skin-username').value)" data-i18n="skin.btn.change">Change Skin</button>
+        <button onclick="resetRagdoll()" style="background: #e74c3c;" data-i18n="skin.btn.reset">Reset</button>
     </div>
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="../../data/info_data.js"></script>
+    <script src="../../core/lang.js"></script>
     <script src="../../core/shared.js"></script>
     <script src="../../core/script.js"></script>
     <script src="../../core/sounds.js?v=20"></script>

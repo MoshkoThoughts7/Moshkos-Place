@@ -27,6 +27,7 @@
     <!-- App Logic -->
     <script src="../ragdoll/ragdoll_physics.js"></script>
     <script src="../ragdoll/ragdoll_background.js"></script>
+    <script src="../ragdoll/tnt.js"></script>
 
     <!-- Navigation -->
     <nav class="navbar" id="navbar">
@@ -40,9 +41,8 @@
             <!-- Header -->
             <section class="page-header">
                 <div class="container">
-                    <h1 class="page-title" data-aos="zoom-in">My Timeline</h1>
-                    <p class="page-subtitle" data-aos="fade-up" data-aos-delay="100">My Path Through the Parlamentum
-                        Staff!</p>
+                    <h1 class="page-title" data-aos="zoom-in" data-i18n="timeline.title">My Timeline</h1>
+                    <p class="page-subtitle" data-aos="fade-up" data-aos-delay="100" data-i18n="timeline.subtitle">My Path Through the Parlamentum Staff!</p>
                 </div>
             </section>
 
@@ -50,15 +50,15 @@
             <div class="timeline-stats" data-aos="fade-up" data-aos-delay="200">
                 <div class="stat-card">
                     <span class="stat-number" id="stat-roles">12</span>
-                    <span class="stat-label">Role Count</span>
+                    <span class="stat-label" data-i18n="timeline.stat.roles">Role Count</span>
                 </div>
                 <div class="stat-card">
                     <span class="stat-number" id="stat-years">3+</span>
-                    <span class="stat-label">Service Tenure</span>
+                    <span class="stat-label" data-i18n="timeline.stat.tenure">Service Tenure</span>
                 </div>
                 <div class="stat-card">
                     <span class="stat-number" id="stat-since">2022</span>
-                    <span class="stat-label">Commissioned In</span>
+                    <span class="stat-label" data-i18n="timeline.stat.since">Commissioned In</span>
                 </div>
             </div>
 
@@ -79,13 +79,14 @@
 
     <div id="ragdoll-container"></div>
     <div class="skin-control-panel">
-        <input type="text" id="skin-username" placeholder="Minecraft Username" value="">
-        <button onclick="window.changeSkin(document.getElementById('skin-username').value)">Change Skin</button>
-        <button onclick="window.resetRagdoll()" style="background: #e74c3c;">Reset</button>
+        <input type="text" id="skin-username" placeholder="Minecraft Username" data-i18n="skin.placeholder" value="">
+        <button onclick="window.changeSkin(document.getElementById('skin-username').value)" data-i18n="skin.btn.change">Change Skin</button>
+        <button onclick="window.resetRagdoll()" style="background: #e74c3c;" data-i18n="skin.btn.reset">Reset</button>
     </div>
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="../data/info_data.js"></script>
+    <script src="../core/lang.js"></script>
     <script src="../core/shared.js"></script>
     <script src="../core/script.js"></script>
     <script src="../data/parlamentum_data.js"></script>
@@ -100,9 +101,12 @@
             return new Date(y, m - 1, d);
         }
 
-        function formatDateEnglish(str) {
+        function formatDate(str) {
             const [d, m, y] = str.split('/');
-            const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            // Use translated month names if MoshkoLang is available
+            const months = (window.MoshkoLang)
+                ? window.MoshkoLang.monthNames()
+                : ['January','February','March','April','May','June','July','August','September','October','November','December'];
             return `${months[parseInt(m) - 1]} ${parseInt(d)}`;
         }
 
@@ -153,7 +157,7 @@
                 <div class="timeline-card">
                     <span class="card-icon">${entry.icon}</span>
                     <div class="card-title">${entry.title}</div>
-                    <div class="card-date">${formatDateEnglish(entry.date)}</div>
+                    <div class="card-date">${formatDate(entry.date)}</div>
                 </div>
             `;
 
@@ -172,11 +176,13 @@
         }
 
         // Run immediately - script is at bottom of body so DOM is already ready.
-        // shared.js will have already run initSharedComponents + AOS.init by this point.
         initParlamentum();
 
         // Also listen for page-load for SPA navigation (subsequent visits)
         window.addEventListener('page-load', initParlamentum);
+
+        // Re-render dates when language changes
+        window.addEventListener('lang-change', buildTimeline);
     </script>
     <script src="../core/sounds.js?v=20"></script>
 </body>

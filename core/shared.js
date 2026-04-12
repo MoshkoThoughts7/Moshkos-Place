@@ -11,8 +11,11 @@ async function initSharedComponents() {
     initBackground();
     await initNavbar();
     initFooter();
-    initThemeToggle();
-    initMuteToggle();
+    initFooter();
+    initSettingsToggle();
+    initRagdollPanel();
+    // Re-apply translations after shared components rebuild the DOM
+    if (window.MoshkoLang) window.MoshkoLang.apply();
 }
 
 
@@ -20,6 +23,7 @@ async function initSharedComponents() {
  * THEME MANAGER
  */
 function initTheme() {
+    // Use localStorage: dark by default, saves permanently
     const savedTheme = localStorage.getItem('moshko_theme') || 'dark';
     document.documentElement.setAttribute('data-theme', savedTheme);
 }
@@ -27,14 +31,14 @@ function initTheme() {
 function toggleTheme() {
     const currentTheme = document.documentElement.getAttribute('data-theme');
     const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-    
+
     document.documentElement.setAttribute('data-theme', newTheme);
     localStorage.setItem('moshko_theme', newTheme);
-    
+
     // Update button icons if needed
     const sunIcon = document.getElementById('theme-icon-sun');
     const moonIcon = document.getElementById('theme-icon-moon');
-    
+
     if (sunIcon && moonIcon) {
         if (newTheme === 'light') {
             sunIcon.style.display = 'none';
@@ -52,26 +56,72 @@ function toggleTheme() {
 }
 
 /**
- * THEME TOGGLE COMPONENT (Bottom Right)
+ * SETTINGS TOGGLE COMPONENT (Combines Theme, Language, Mute)
  */
-function initThemeToggle() {
+function initSettingsToggle() {
+    if (document.getElementById('settings-container')) return;
+
+    const container = document.createElement('div');
+    container.className = 'settings-container';
+    container.id = 'settings-container';
+
+    const GEAR_ICON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>`;
+
     const SUN_ICON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
     const MOON_ICON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
+    const ICON_ON = `<svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>`;
+    const ICON_OFF = `<svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>`;
 
-    const toggle = document.createElement('div');
-    toggle.className = 'theme-toggle';
-    toggle.id = 'theme-toggle';
-    toggle.title = 'Toggle Light/Dark Mode';
+    container.innerHTML = `
+        <div class="settings-dropdown">
+            <button class="settings-btn" id="lang-btn" title="Toggle Language"><span class="lang-toggle-label">EN</span></button>
+            <button class="settings-btn" id="theme-btn" title="Toggle Theme"></button>
+            <button class="settings-btn" id="mute-btn" title="Toggle Mute"></button>
+        </div>
+        <div class="settings-main-btn">
+            ${GEAR_ICON}
+        </div>
+    `;
 
+    document.body.appendChild(container);
+
+    const langBtn = document.getElementById('lang-btn');
+    const themeBtn = document.getElementById('theme-btn');
+    const muteBtn = document.getElementById('mute-btn');
+
+    // Init state
     const currentTheme = document.documentElement.getAttribute('data-theme');
-    toggle.innerHTML = currentTheme === 'light' ? MOON_ICON : SUN_ICON;
+    themeBtn.innerHTML = currentTheme === 'light' ? SUN_ICON : MOON_ICON;
 
-    document.body.appendChild(toggle);
+    const isMuted = localStorage.getItem('moshko_muted') === 'true';
+    if (isMuted) muteBtn.classList.add('is-muted');
+    muteBtn.innerHTML = isMuted ? ICON_OFF : ICON_ON;
 
-    toggle.addEventListener('click', () => {
+    const isHe = window.MoshkoLang && window.MoshkoLang.current === 'he';
+    langBtn.querySelector('.lang-toggle-label').textContent = isHe ? 'HE' : 'EN';
+    if (isHe) langBtn.setAttribute('data-lang', 'he');
+
+    // Events
+    langBtn.addEventListener('click', () => {
+        if (window.MoshkoLang) window.MoshkoLang.toggle();
+        const isNowHe = window.MoshkoLang && window.MoshkoLang.current === 'he';
+        langBtn.querySelector('.lang-toggle-label').textContent = isNowHe ? 'HE' : 'EN';
+        if (isNowHe) langBtn.setAttribute('data-lang', 'he');
+        else langBtn.removeAttribute('data-lang');
+    });
+
+    themeBtn.addEventListener('click', () => {
         toggleTheme();
         const newTheme = document.documentElement.getAttribute('data-theme');
-        toggle.innerHTML = newTheme === 'light' ? MOON_ICON : SUN_ICON;
+        themeBtn.innerHTML = newTheme === 'light' ? SUN_ICON : MOON_ICON;
+    });
+
+    muteBtn.addEventListener('click', () => {
+        if (window.MoshkoSounds && window.MoshkoSounds.toggleMute) {
+            const newState = window.MoshkoSounds.toggleMute();
+            muteBtn.classList.toggle('is-muted', newState);
+            muteBtn.innerHTML = newState ? ICON_OFF : ICON_ON;
+        }
     });
 }
 
@@ -83,6 +133,9 @@ function initThemeToggle() {
 function initBackground() {
     const bgElement = document.querySelector('.space-background');
     if (!bgElement) return;
+
+    // Prevent background reset between SPA navigations
+    if (document.getElementById('star-canvas')) return;
 
     bgElement.innerHTML = `
         <div class="nebula"></div>
@@ -98,15 +151,22 @@ function initBackground() {
     window.addEventListener('resize', resizeSC);
 
     const STAR_COUNT = 320;
+    // Seeded random for consistent stars on every page (even on full reloads)
+    let state = 12345;
+    function next() {
+        state = (state * 48271) % 2147483647;
+        return state / 2147483647;
+    }
+
     const stars = Array.from({ length: STAR_COUNT }, () => ({
-        x: Math.random(),
-        y: Math.random(),
-        r: Math.random() < 0.12 ? (1.4 + Math.random() * 1.2)
-            : Math.random() < 0.35 ? (0.7 + Math.random() * 0.7)
-                : (0.2 + Math.random() * 0.4),
-        speed: 0.3 + Math.random() * 1.2,
-        offset: Math.random() * Math.PI * 2,
-        tinted: Math.random() < 0.18,
+        x: next(),
+        y: next(),
+        r: next() < 0.12 ? (1.4 + next() * 1.2)
+            : next() < 0.35 ? (0.7 + next() * 0.7)
+                : (0.2 + next() * 0.4),
+        speed: 0.3 + next() * 1.2,
+        offset: next() * Math.PI * 2,
+        tinted: next() < 0.18,
     }));
 
     function drawStars(t) {
@@ -114,8 +174,14 @@ function initBackground() {
         stars.forEach(s => {
             const isLight = document.documentElement.getAttribute('data-theme') === 'light';
             const alpha = 0.3 + 0.7 * (0.5 + 0.5 * Math.sin(t * s.speed + s.offset));
-            const px = s.x * sc.width, py = s.y * sc.height;
-            
+
+            // Allow stars to naturally drift left slowly over time
+            const moveSpeed = s.speed * 0.015;
+            let driftingX = (s.x - t * moveSpeed) % 1;
+            if (driftingX < 0) driftingX += 1;
+
+            const px = driftingX * sc.width, py = s.y * sc.height;
+
             if (s.r > 1.2) {
                 const g = sCtx.createRadialGradient(px, py, 0, px, py, s.r * 3.5);
                 const color = isLight ? `rgba(124, 62, 237, ${alpha * 0.4})` : (s.tinted ? `rgba(200,170,255,${alpha})` : `rgba(255,255,255,${alpha})`);
@@ -211,7 +277,7 @@ async function initNavbar() {
     const normalizedPath = window.location.pathname.replace(/\\/g, '/');
     const isMinecraftDir = normalizedPath.includes('/pages/minecraft/');
     const isPagesDir = normalizedPath.includes('/pages/');
-    
+
     let pbase, ibase, imgbase, basePath;
 
     if (isMinecraftDir) {
@@ -252,19 +318,25 @@ async function initNavbar() {
     const title = contactCfg.title || '🔗 Contact Info';
     const links = contactCfg.dropdownLinks || [];
 
+    // Translate contact title using MoshkoLang if available
+    const isHe = window.MoshkoLang && window.MoshkoLang.current === 'he';
+    const translatedTitle = (isHe && window.MoshkoLang) ? window.MoshkoLang.t('contact.title') : (contactCfg.title || '🔗 Contact Info');
+
     const dropdownItemsHTML = links.map(item => {
+        // Use translated label if in Hebrew and label_he exists
+        const label = (isHe && item.label_he) ? item.label_he : item.label;
         if (item.type === 'email') {
             return `
                 <button class="contact-link ${item.cssClass}" onclick="sendGmail('${item.address}', this)">
-                    <img src="${imgbase}${item.icon}" class="logo" alt="${item.label}">
-                    <span class="dance">${item.label}</span>
+                    <img src="${imgbase}${item.icon}" class="logo" alt="${label}">
+                    <span class="dance">${label}</span>
                     <span class="arrow">&#10148;</span>
                 </button>`;
         } else {
             return `
                 <a href="${item.url}" target="_blank" class="contact-link ${item.cssClass}">
-                    <img src="${imgbase}${item.icon}" class="logo" alt="${item.label}">
-                    <span class="dance">${item.label}</span>
+                    <img src="${imgbase}${item.icon}" class="logo" alt="${label}">
+                    <span class="dance">${label}</span>
                     <span class="arrow">&#10148;</span>
                 </a>`;
         }
@@ -279,8 +351,8 @@ async function initNavbar() {
                         <span class="logo-dropdown-indicator">&#9660;</span>
                     </a>
                     <div class="logo-dropdown">
-                        <div class="dropdown-section">
-                            <h4 style="margin-top: 15px;">${title}</h4>
+                        <div class="dropdown-section" dir="${isHe ? 'rtl' : 'ltr'}">
+                            <h4 style="margin-top: 15px;">${translatedTitle}</h4>
                             <div class="integrated-contact-menu">
                                 ${dropdownItemsHTML}
                             </div>
@@ -290,11 +362,11 @@ async function initNavbar() {
             </div>
 
             <ul class="nav-menu" id="nav-menu">
-                <li><a href="${pbase}home.html" class="nav-link">Home</a></li>
-                <li><a href="${pbase}updates.html" class="nav-link">Updates</a></li>
-                <li><a href="${pbase}timeline.html" class="nav-link">Timeline</a></li>
-                <li><a href="${pbase}minecraft.html" class="nav-link">Minecraft</a></li>
-                <li><a href="${pbase}games.html" class="nav-link">Games</a></li>
+                <li><a href="${pbase}home.html" class="nav-link" data-i18n="nav.home">Home</a></li>
+                <li><a href="${pbase}updates.html" class="nav-link" data-i18n="nav.updates">Updates</a></li>
+                <li><a href="${pbase}timeline.html" class="nav-link" data-i18n="nav.timeline">Timeline</a></li>
+                <li><a href="${pbase}minecraft.html" class="nav-link" data-i18n="nav.minecraft">Minecraft</a></li>
+                <li><a href="${pbase}games.html" class="nav-link" data-i18n="nav.games">Games</a></li>
             </ul>
 
             <div class="hamburger" id="hamburger">
@@ -313,37 +385,13 @@ async function initNavbar() {
     }
 }
 
-/**
- * MUTE TOGGLE COMPONENT
- */
-function initMuteToggle() {
-    const ICON_ON = `<svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>`;
-    const ICON_OFF = `<svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>`;
 
-    const toggle = document.createElement('div');
-    toggle.className = 'mute-toggle';
-    toggle.id = 'mute-toggle';
-    
-    const isMuted = localStorage.getItem('moshko_muted') === 'true'; // Default: false
-    if (isMuted) toggle.classList.add('is-muted');
-    
-    toggle.innerHTML = isMuted ? ICON_OFF : ICON_ON;
-    document.body.appendChild(toggle);
-
-    toggle.addEventListener('click', () => {
-        if (window.MoshkoSounds && window.MoshkoSounds.toggleMute) {
-            const newState = window.MoshkoSounds.toggleMute();
-            toggle.classList.toggle('is-muted', newState);
-            toggle.innerHTML = newState ? ICON_OFF : ICON_ON;
-        }
-    });
-}
 
 function initFooter() {
     const footerHTML = `
         <div class="container">
             <div class="footer-content">
-                <p style="font-size: 0.8rem; opacity: 0.7; margin-top: 5px;">&#127828; Created By Moshko's Core &#127866;</p>
+                <p style="font-size: 0.8rem; opacity: 0.7; margin-top: 5px;" data-i18n="footer.credit">&#127828; Created By Moshko's Core &#127866;</p>
             </div>
         </div>
     `;
@@ -479,12 +527,12 @@ function navigateTo(urlStr) {
     try {
         const absoluteUrl = new URL(urlStr, window.location.href).href;
         if (absoluteUrl === window.location.href) return;
-        
+
         // Prevent SecurityError on local file:// protocol
         if (window.location.protocol !== 'file:') {
             history.pushState(null, '', absoluteUrl);
         }
-        
+
         loadPage(absoluteUrl);
     } catch (err) {
         console.warn('History pushState failed, falling back to normal navigation:', err);
@@ -569,3 +617,89 @@ async function executePageScripts(doc) {
         }
     }
 }
+
+// Ensure the navbar (specifically the Contact overlay which runs dynamically) updates on language shift
+window.addEventListener('lang-change', async () => {
+    await initNavbar();
+    if (window.MoshkoLang) window.MoshkoLang.apply();
+});
+
+/**
+ * RAGDOLL CONTROL PANEL (Skin + Grenade Slot)
+ */
+function initRagdollPanel() {
+    if (document.getElementById('ragdoll-control-panel')) return;
+
+    const panel = document.createElement('div');
+    panel.id = 'ragdoll-control-panel';
+    panel.className = 'ragdoll-control-panel';
+
+    const savedUser = localStorage.getItem('ragdoll_username') || '';
+
+    panel.innerHTML = `
+        <div class="skin-input-group">
+            <input type="text" id="skin-username-global" placeholder="Username" data-i18n="skin.placeholder" value="${savedUser}">
+            <button onclick="window.changeSkin(document.getElementById('skin-username-global').value)" class="panel-btn" data-i18n="skin.btn.change">Change</button>
+            <button onclick="window.resetRagdoll()" class="panel-btn reset-btn" data-i18n="skin.btn.reset">Reset</button>
+            <div class="inventory-slot" id="grenade-slot" onmousedown="handleGrenadeSlotClick(event)">
+                <div class="grenade-icon"></div>
+                <div id="grenade-cooldown" class="cooldown-overlay"></div>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(panel);
+
+    // Sync input with storage updates
+    const input = document.getElementById('skin-username-global');
+    if (input) {
+        input.addEventListener('input', (e) => {
+            localStorage.setItem('ragdoll_username', e.target.value);
+        });
+    }
+}
+
+let lastGrenadeLog = 0;
+const GRENADE_COOLDOWN_MS = 4000;
+
+window.handleGrenadeSlotClick = (e) => {
+    const now = Date.now();
+    if (now - lastGrenadeLog < GRENADE_COOLDOWN_MS) return;
+    
+    if (window.spawnAndDragGrenade) {
+        window.spawnAndDragGrenade(e);
+        lastGrenadeLog = now;
+        startGrenadeCooldownUI();
+    }
+};
+
+function startGrenadeCooldownUI() {
+    const overlay = document.getElementById('grenade-cooldown');
+    if (!overlay) return;
+    
+    overlay.style.transition = 'none';
+    overlay.style.height = '100%';
+    
+    // Force reflow
+    overlay.offsetHeight;
+    
+    overlay.style.transition = `height ${GRENADE_COOLDOWN_MS}ms linear`;
+    overlay.style.height = '0%';
+}
+
+window.addEventListener('keydown', (e) => {
+    if (e.key.toLowerCase() === 'g') {
+        const activeElement = document.activeElement;
+        const isInput = activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA';
+        if (!isInput) {
+            const now = Date.now();
+            if (now - lastGrenadeLog >= GRENADE_COOLDOWN_MS) {
+                if (window.throwGrenade) {
+                    window.throwGrenade();
+                    lastGrenadeLog = now;
+                    startGrenadeCooldownUI();
+                }
+            }
+        }
+    }
+});

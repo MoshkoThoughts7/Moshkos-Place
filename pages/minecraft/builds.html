@@ -27,6 +27,7 @@
     <!-- App Logic -->
     <script src="../../ragdoll/ragdoll_physics.js"></script>
     <script src="../../ragdoll/ragdoll_background.js"></script>
+    <script src="../../ragdoll/tnt.js"></script>
 
     <!-- Navigation -->
     <nav class="navbar" id="navbar">
@@ -37,10 +38,10 @@
         <main id="main-content">
             <section class="page-header">
                 <div class="container">
-                    <h1 class="page-title">Build Gallery</h1>
-                    <p class="page-subtitle">A collection of my most epic Minecraft creations!</p>
+                    <h1 class="page-title" data-i18n="builds.title">Build Gallery</h1>
+                    <p class="page-subtitle" data-i18n="builds.subtitle">A collection of my most epic Minecraft creations!</p>
                     <div style="margin-top: 2rem;">
-                        <a href="../minecraft.html" class="btn btn-primary">Back to Minecraft Page</a>
+                        <a href="../minecraft.html" class="btn btn-primary" data-i18n="builds.back">Back to Minecraft Page</a>
                     </div>
                 </div>
             </section>
@@ -62,14 +63,15 @@
 
     <div id="ragdoll-container"></div>
     <div class="skin-control-panel">
-        <input type="text" id="skin-username" placeholder="Minecraft Username" value="">
-        <button onclick="window.changeSkin(document.getElementById('skin-username').value)">Change Skin</button>
-        <button onclick="window.resetRagdoll()" style="background: #e74c3c;">Reset</button>
+        <input type="text" id="skin-username" placeholder="Minecraft Username" data-i18n="skin.placeholder" value="">
+        <button onclick="window.changeSkin(document.getElementById('skin-username').value)" data-i18n="skin.btn.change">Change Skin</button>
+        <button onclick="window.resetRagdoll()" style="background: #e74c3c;" data-i18n="skin.btn.reset">Reset</button>
     </div>
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script src="../../data/builds_data.js"></script>
     <script src="../../data/info_data.js"></script>
+    <script src="../../core/lang.js"></script>
+    <script src="../../data/builds_data.js"></script>
     <script src="../../core/shared.js"></script>
     <script src="../../core/script.js"></script>
     <script src="../../core/sounds.js?v=20"></script>

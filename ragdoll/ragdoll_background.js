@@ -17,13 +17,21 @@ const PIXEL_SCALE = 0.1; // Slightly smaller to fix "too big"
 const THREE = window.THREE;
 const CANNON = window.CANNON;
 
-let scene, camera, renderer, world;
-let ragdolls = [];
-let walls = [];
-let boundaries = [];
-let mouseConstraint;
-let lastTime;
+var scene, camera, renderer, world;
+var ragdolls = [];
+var walls = [];
+var boundaries = [];
+var mouseConstraint;
+var lastTime;
 window.lastInteractionTime = Date.now();
+
+// TNT grenade system globals
+var grenades = [];
+var draggedGrenade = null;
+var tntBounds = { bottom: -10, top: 10, left: -20, right: 20 }; // updated in animate
+var mouseVelocity = new (window.THREE ? window.THREE.Vector3 : Object)(); // velocity of mouseBody
+var lastMousePos = { x: 0, y: 0, copy(v) { this.x = v.x; this.y = v.y; } };
+
 
 function saveRagdollState() {
     if (ragdolls.length === 0) return;
@@ -313,6 +321,7 @@ class MinecraftRagdoll {
 
 // --- Initialization ---
 
+
 let animationId = null;
 let isInitialized = false;
 
@@ -356,7 +365,8 @@ async function init() {
     world = new CANNON.World();
     world.gravity.set(0, -30, 0);
     world.broadphase = new CANNON.NaiveBroadphase();
-    world.solver.iterations = 100;
+    world.solver.iterations = 15; // Massive lag fix (was 100!)
+    world.allowSleep = true; // Objects use 0% CPU when resting
 
     createBoundaries();
     updateWalls();
@@ -482,13 +492,6 @@ function initMouseInteraction() {
 }
 
 function onMouseMove(e) {
-    // Safety: If somehow we lost the mouseup event (e.g. over a button/link), 
-    // check if the buttons are actually still pressed.
-    if (mouseConstraintConnection && (e.buttons & 1) === 0) {
-        onMouseUp();
-        return;
-    }
-
     mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
     window.mouseNormalized = mouse;
@@ -499,7 +502,11 @@ function onMouseMove(e) {
     raycaster.ray.intersectPlane(planeZ, target);
 
     if (target) {
-        mouseBody.position.set(target.x, target.y, 0);
+        const margin = 1.0;
+        const cx = Math.max(tntBounds.left + margin, Math.min(tntBounds.right - margin, target.x));
+        const cy = Math.max(tntBounds.bottom + margin, Math.min(tntBounds.top - margin, target.y));
+        
+        mouseBody.position.set(cx, cy, 0);
         if (mouseConstraintConnection) {
             mouseConstraintConnection.bodyB.wakeUp();
             window.lastInteractionTime = Date.now();
@@ -508,10 +515,28 @@ function onMouseMove(e) {
 }
 
 function onMouseDown(e) {
-    if (e.button !== 0) return;
+    if (e.button !== undefined && e.button !== 0) return;
 
     mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+
+    // Purge old historical cursor velocities perfectly so picking up items far away doesn't math-spike tracking
+    window.mousePosHistory = [];
+    mouseVelocity.x = 0;
+    mouseVelocity.y = 0;
+
+    // Defensively sever absolutely all existing drag hooks so multi-touch can never bind 2 heavy bodies to 1 kinematic point simultaneously
+    if (window.mouseConstraintConnection) {
+        world.removeConstraint(window.mouseConstraintConnection);
+        window.mouseConstraintConnection = null;
+    }
+    if (window.draggedGrenade) {
+        if (window.draggedGrenade.dragConstraint) world.removeConstraint(window.draggedGrenade.dragConstraint);
+        window.draggedGrenade.dragConstraint = null;
+        window.draggedGrenade.held = false;
+        window.draggedGrenade.body.wakeUp();
+        window.draggedGrenade = null;
+    }
 
     raycaster.setFromCamera(mouse, camera);
     const intersects = raycaster.intersectObjects(scene.children, true);
@@ -519,73 +544,108 @@ function onMouseDown(e) {
     let hitBody = null;
     let hitPoint = null;
 
-    // Filter intersects to find the first valid Ragdoll Part
     for (let i = 0; i < intersects.length; i++) {
         const clickedMesh = intersects[i].object;
 
-        // Check all ragdolls
+        // â”€â”€ Check grenades first â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        let grenadeHit = false;
+        for (let g = 0; g < grenades.length; g++) {
+            const gren = grenades[g];
+            if (clickedMesh === gren.mesh) {
+                grenadeHit = true;
+                if (!gren.exploded) {
+                    draggedGrenade = gren;
+                    gren.held = true;
+                    gren.countingDown = false; // Defuse/Interrupt the floor-lock countdown if grabbed!
+                    window.lastInteractionTime = Date.now();
+                    if (!gren.dragConstraint) {
+                        const hp = intersects[i].point;
+                        mouseBody.position.set(hp.x, hp.y, 0);
+                        lastMousePos.x = hp.x; 
+                        lastMousePos.y = hp.y;
+                        mouseVelocity.x = 0;
+                        mouseVelocity.y = 0;
+                        
+                        const localPivot = gren.body.pointToLocalFrame(new CANNON.Vec3(hp.x, hp.y, 0));
+                        gren.dragConstraint = new CANNON.PointToPointConstraint(
+                            mouseBody, new CANNON.Vec3(0, 0, 0), gren.body, localPivot
+                        );
+                        world.addConstraint(gren.dragConstraint);
+                    }
+                }
+                break;
+            }
+        }
+        if (grenadeHit) return;
+
+        // â”€â”€ Check ragdoll parts â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         for (let r = 0; r < ragdolls.length; r++) {
             const doll = ragdolls[r];
             const parts = Object.values(doll.parts);
             for (let pIdx = 0; pIdx < parts.length; pIdx++) {
                 const p = parts[pIdx];
-                // Check if mesh belongs to this part
-                if (clickedMesh === p.mesh || clickedMesh.parent === p.mesh || (p.mesh.children && p.mesh.children.includes(clickedMesh))) {
+                if (clickedMesh === p.mesh || clickedMesh.parent === p.mesh ||
+                    (p.mesh.children && p.mesh.children.includes(clickedMesh))) {
                     hitBody = p.body;
-
-                    // HEAD FIX: Redirect Head drag to Body (since Head is locked)
-                    if (p === doll.parts.head) {
-                        hitBody = doll.parts.body.body;
-                    }
-
+                    if (p === doll.parts.head) hitBody = doll.parts.body.body;
                     hitPoint = intersects[i].point;
-                    break; // Found part
+                    break;
                 }
             }
-            if (hitBody) break; // Found doll
+            if (hitBody) break;
         }
-        if (hitBody) break; // Found hit
+        if (hitBody) break;
     }
 
     if (hitBody) {
         window.lastInteractionTime = Date.now();
-        if (ragdolls.length > 0) ragdolls[0].isStable = false; // Wake up
-
-        // Don't drag static walls
+        if (ragdolls.length > 0) ragdolls[0].isStable = false;
         if (walls.includes(hitBody)) return;
-
         mouseBody.position.copy(hitPoint);
+        lastMousePos.x = hitPoint.x;
+        lastMousePos.y = hitPoint.y;
+        mouseVelocity.x = 0;
+        mouseVelocity.y = 0;
 
-        // PIVOT DRAG: Grabbing specific point (Head/Arm/Leg) applies torque correctly
-        // Even if Head is locked to Body, grabbing Body at Head height works.
         const cannonHitPoint = new CANNON.Vec3(hitPoint.x, hitPoint.y, hitPoint.z);
         const localPivot = hitBody.pointToLocalFrame(cannonHitPoint);
-        mouseConstraintConnection = new CANNON.PointToPointConstraint(mouseBody, new CANNON.Vec3(0, 0, 0), hitBody, localPivot);
-
+        mouseConstraintConnection = new CANNON.PointToPointConstraint(
+            mouseBody, new CANNON.Vec3(0, 0, 0), hitBody, localPivot
+        );
         world.addConstraint(mouseConstraintConnection);
         ragdolls.forEach(d => d.currentState = 'IDLE');
-        
-        // Play hit sound when clicking on the ragdoll
-        if (window.MoshkoSounds && window.MoshkoSounds.playHitSound) {
-            window.MoshkoSounds.playHitSound();
-        }
-        
-        // Start drag looping
-        if (window.MoshkoSounds) {
-            if(window.MoshkoSounds.startDragLoop) window.MoshkoSounds.startDragLoop();
-        }
+        if (window.MoshkoSounds?.playHitSound) window.MoshkoSounds.playHitSound();
+        if (window.MoshkoSounds?.startDragLoop) window.MoshkoSounds.startDragLoop();
     }
 }
 
+
+
+
 function onMouseUp() {
+    // Release ragdoll
     if (mouseConstraintConnection) {
         world.removeConstraint(mouseConstraintConnection);
         mouseConstraintConnection = null;
         window.lastInteractionTime = Date.now();
-        
-        if(window.MoshkoSounds && window.MoshkoSounds.stopDragLoop) {
-            window.MoshkoSounds.stopDragLoop();
+        if (window.MoshkoSounds?.stopDragLoop) window.MoshkoSounds.stopDragLoop();
+    }
+
+    if (draggedGrenade) {
+        if (draggedGrenade.dragConstraint) {
+            world.removeConstraint(draggedGrenade.dragConstraint);
+            draggedGrenade.dragConstraint = null;
         }
+        
+        // Inject ultra-smoothed momentum calculation to replicate the elastic whip-throw of the multi-chain ragdoll 
+        draggedGrenade.body.velocity.set(mouseVelocity.x, mouseVelocity.y, 0);
+        
+        draggedGrenade.held = false;
+        draggedGrenade.mesh.scale.setScalar(1.0);
+        draggedGrenade.body.wakeUp();
+        draggedGrenade = null;
+        window.lastInteractionTime = Date.now();
+        if (window.MoshkoSounds?.stopDragLoop) window.MoshkoSounds.stopDragLoop();
     }
 }
 
@@ -622,21 +682,58 @@ function animate(time) {
         }
     }
 
-    world.step(1 / 60, deltaTime, 40);
+    // Compute tntBounds from camera FOV each frame
+    {
+        const dist = camera.position.z;
+        const vFOV = THREE.MathUtils.degToRad(camera.fov);
+        const h = 2 * Math.tan(vFOV / 2) * dist * 0.95;
+        const w = h * camera.aspect;
+        tntBounds.bottom = -h / 2;
+        tntBounds.top    =  h / 2;
+        tntBounds.left   = -w / 2;
+        tntBounds.right  =  w / 2;
+    }
+
+    // Track physical cursor history over 5 frames (approx 80ms) for flawless throw momentum.
+    // Frame-by-frame deltaTime math fluctuates too wildly resulting in rocket-launches or dead-drops.
+    if (!window.mousePosHistory) window.mousePosHistory = [];
+    if (mouseBody && deltaTime > 0) {
+        window.mousePosHistory.push({ x: mouseBody.position.x, y: mouseBody.position.y, t: time });
+        if (window.mousePosHistory.length > 5) window.mousePosHistory.shift();
+
+        const oldest = window.mousePosHistory[0];
+        const newest = window.mousePosHistory[window.mousePosHistory.length - 1];
+        const dt = (newest.t - oldest.t) / 1000;
+        
+        if (dt > 0.01) {
+            mouseVelocity.x = (newest.x - oldest.x) / dt;
+            mouseVelocity.y = (newest.y - oldest.y) / dt;
+        } else {
+            mouseVelocity.x = 0;
+            mouseVelocity.y = 0;
+        }
+    }
+
+    world.step(1 / 60, deltaTime, 10);
     ragdolls.forEach(doll => doll.update(time, deltaTime));
 
-    // Force absolute front every frame
-    if (renderer.domElement) {
+    // Update explosions (Unified high-perf manager)
+    if (window.updateExplosions) window.updateExplosions(deltaTime);
+
+    // Update grenades
+    for (let i = grenades.length - 1; i >= 0; i--) {
+        grenades[i].update(deltaTime);
+        if (grenades[i].exploded) grenades.splice(i, 1);
+    }
+
+    // Force absolute front (Throttled check to save CPU)
+    if (renderer.domElement && document.body.lastElementChild !== renderer.domElement) {
         renderer.domElement.style.position = 'fixed';
         renderer.domElement.style.top = '0';
         renderer.domElement.style.left = '0';
         renderer.domElement.style.zIndex = '2147483647';
         renderer.domElement.style.pointerEvents = 'none';
-
-        // Ensure it's the absolute last child of body to win siblings order
-        if (document.body.lastElementChild !== renderer.domElement) {
-            document.body.appendChild(renderer.domElement);
-        }
+        document.body.appendChild(renderer.domElement);
     }
 
     renderer.render(scene, camera);

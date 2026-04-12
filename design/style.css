@@ -215,20 +215,15 @@
     color: var(--color-primary-dark);
 }
 
-[data-theme="light"] .skin-control-panel {
+[data-theme="light"] .ragdoll-control-panel {
     background: rgba(255, 255, 255, 0.85);
     border-color: rgba(124, 62, 237, 0.15);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
 
-[data-theme="light"] .skin-control-panel input {
-    background: rgba(124, 62, 237, 0.05);
-    border-color: rgba(124, 62, 237, 0.15);
-    color: var(--color-text-primary);
-}
-
-[data-theme="light"] .skin-control-panel input::placeholder {
-    color: var(--color-text-muted);
+[data-theme="light"] .inventory-slot {
+    background: #bbb;
+    border-color: #888 #eee #eee #888;
 }
 
 
@@ -494,11 +489,10 @@ section,
     display: none !important;
 }
 
-/* Skin control panel */
-.skin-control-panel button {
+.ragdoll-control-panel button {
     transition: transform 0.1s ease, background 0.2s;
 }
-.skin-control-panel button:active {
+.ragdoll-control-panel button:active {
     transform: scale(0.95);
 }
 
@@ -725,6 +719,18 @@ section,
     gap: var(--spacing-md);
     justify-content: center;
     flex-wrap: wrap;
+}
+
+[dir="rtl"] .hero-buttons,
+[dir="rtl"] .ragdoll-control-panel,
+[dir="rtl"] .skin-input-group {
+    direction: ltr;
+}
+
+[dir="rtl"] .hero-buttons .btn,
+[dir="rtl"] .skin-input-group input,
+[dir="rtl"] .skin-input-group .panel-btn {
+    direction: rtl;
 }
 
 @keyframes float {
@@ -1179,6 +1185,14 @@ section,
     gap: 3rem;
 }
 
+[dir="rtl"] .updates-grid {
+    direction: ltr;
+}
+
+[dir="rtl"] .update-card {
+    direction: rtl;
+}
+
 .update-card {
     flex: 0 1 400px;
     min-width: 300px;
@@ -1267,6 +1281,30 @@ section,
     gap: var(--spacing-xl);
     justify-items: center;
 }
+
+[dir="rtl"] .games-grid,
+[dir="rtl"] .games-selection-grid,
+[dir="rtl"] .game-controls,
+[dir="rtl"] .nav-container,
+[dir="rtl"] .nav-menu,
+[dir="rtl"] .contact-content,
+[dir="rtl"] .timeline-container,
+[dir="rtl"] .quick-links-grid,
+[dir="rtl"] .gallery-grid,
+[dir="rtl"] .services-grid,
+[dir="rtl"] .about-content {
+    direction: ltr;
+}
+
+[dir="rtl"] .game-card,
+[dir="rtl"] .game-select-btn,
+[dir="rtl"] .game-btn,
+[dir="rtl"] .contact-info,
+[dir="rtl"] .timeline-item,
+[dir="rtl"] .quick-link-card,
+[dir="rtl"] .gallery-item {
+    direction: rtl;
+}
 @media (max-width: 1100px) {
     .games-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -1338,6 +1376,18 @@ section,
     grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
     gap: var(--spacing-xl);
     margin-bottom: var(--spacing-2xl);
+}
+
+[dir="rtl"] .minecraft-content,
+[dir="rtl"] .minecraft-features-section div[style*="display: grid"],
+[dir="rtl"] .pack-grid {
+    direction: ltr;
+}
+
+[dir="rtl"] .minecraft-card,
+[dir="rtl"] .minecraft-features-section div[style*="display: grid"] > div,
+[dir="rtl"] .pack-feature-card {
+    direction: rtl;
 }
 
 .minecraft-card {
@@ -1632,6 +1682,12 @@ h1, h2, h3, h4, h5, h6 {
 [lang="he"] h1, [lang="he"] h2, [lang="he"] h3, [lang="he"] h4 {
     font-family: var(--font-hebrew) !important;
     font-weight: 900;
+}
+
+[dir="rtl"] .bio-card,
+[dir="rtl"] .bio-card p {
+    direction: rtl !important;
+    text-align: right !important;
 }
 
 .gallery-overlay h3 {
@@ -2114,6 +2170,17 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .builds-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--spacing-xl); padding: 0 var(--spacing-md); margin-bottom: var(--spacing-3xl); }
+
+[dir="rtl"] .builds-grid,
+[dir="rtl"] .minecraft-gallery,
+[dir="rtl"] .builds-filters {
+    direction: ltr;
+}
+
+[dir="rtl"] .build-card,
+[dir="rtl"] .filter-btn {
+    direction: rtl;
+}
 
 .build-card { flex: 0 1 350px; min-width: 300px; max-width: 480px; 
     background: rgba(139, 92, 246, 0.1);
@@ -3205,45 +3272,165 @@ canvas:hover {
     overflow: hidden;
 }
 
-.skin-control-panel {
+/* ========================================
+   Ragdoll Global Control Panel (Minecraft Style)
+   ======================================== */
+.ragdoll-control-panel {
     position: fixed !important;
     bottom: 20px;
     left: 20px;
     z-index: 2147483648 !important;
-    /* Above Ragdoll Canvas */
-    background: rgba(15, 11, 31, 0.85);
-    padding: 12px;
-    border-radius: 12px;
     display: flex;
-    gap: 12px;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none; /* Let clicks pass through gaps */
+}
+
+.ragdoll-control-panel > * {
+    pointer-events: auto; /* Re-enable for content */
+}
+
+.skin-input-group {
+    background: rgba(10, 6, 20, 0.65);
+    backdrop-filter: blur(12px);
+    padding: 8px;
+    border-radius: 12px;
+    border: 1px solid var(--color-border);
+    display: flex;
+    gap: 8px;
     align-items: center;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(139, 92, 246, 0.4);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    box-shadow: var(--shadow-card);
+    transition: var(--transition-smooth);
 }
 
-.skin-control-panel input {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+[data-theme="light"] .skin-input-group {
+    background: rgba(255, 255, 255, 0.85);
+}
+
+.skin-input-group input {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     color: white;
-    padding: 5px 10px;
-    border-radius: 4px;
-    font-family: var(--font-heading);
+    padding: 6px 12px;
+    border-radius: 6px;
+    width: 130px;
+    font-size: 0.85rem;
+    transition: var(--transition-smooth);
 }
 
-.skin-control-panel button {
+[data-theme="light"] .skin-input-group input {
+    background: rgba(124, 62, 237, 0.05);
+    border: 1px solid var(--color-border);
+    color: var(--color-text-primary);
+}
+
+.panel-btn {
     background: var(--color-primary);
     color: white;
     border: none;
-    padding: 5px 15px;
-    border-radius: 4px;
+    padding: 6px 14px;
+    border-radius: 6px;
     cursor: pointer;
-    font-family: var(--font-heading);
-    transition: background 0.2s;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: var(--transition-smooth);
 }
 
-.skin-control-panel button:hover {
-    background: var(--color-primary-dark);
+.panel-btn:hover {
+    background: var(--color-primary-light);
+    transform: translateY(-2px);
+}
+
+.reset-btn {
+    background: rgba(231, 76, 60, 0.8);
+}
+
+.reset-btn:hover {
+    background: rgba(231, 76, 60, 1);
+}
+
+.inventory-bar {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.inventory-slot {
+    width: 44px;
+    height: 44px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    position: relative;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition-smooth);
+    margin-left: 5px;
+    flex-shrink: 0;
+    box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+[data-theme="light"] .inventory-slot {
+    background: #ffffff;
+    box-shadow: var(--shadow-card);
+}
+
+.inventory-slot:hover {
+    background: var(--color-border-hover);
+    transform: scale(1.08) translateY(-2px);
+    box-shadow: var(--shadow-glow);
+}
+
+.inventory-slot:active {
+    transform: scale(0.95);
+}
+
+/* Minecraft TNT Icon */
+.grenade-icon {
+    width: 24px;
+    height: 24px;
+    background: #e74c3c; /* Red */
+    border: 1px solid #c0392b;
+    position: relative;
+    box-shadow: inset -3px -3px rgba(0,0,0,0.2);
+}
+
+.grenade-icon::before {
+    content: 'TNT';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    background: #ffffff;
+    color: #000;
+    font-size: 6px;
+    font-weight: 900;
+    text-align: center;
+    line-height: 8px;
+    transform: translateY(-50%);
+    font-family: monospace;
+}
+
+.grenade-icon::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 8px;
+    width: 2px;
+    height: 100%;
+    background: rgba(0,0,0,0.1);
+    box-shadow: 4px 0 rgba(0,0,0,0.1), 8px 0 rgba(0,0,0,0.1), 12px 0 rgba(0,0,0,0.1);
+}
+
+.cooldown-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 0%;
+    background: rgba(0, 0, 0, 0.6);
+    pointer-events: none;
 }
 
 
@@ -3715,69 +3902,16 @@ canvas:hover {
 /* .page-title + .hero-title override removed — both defined cleanly above */
 
 /* ========================================
-   Mute Toggle UI
+   Floating Settings Sub-Menu
    ======================================== */
-.mute-toggle {
+.settings-container {
     position: fixed;
     bottom: 20px;
     right: 20px;
-    z-index: 2147483648 !important; /* Match Skin Panel Z-Index */
-    width: 48px;
-    height: 44px; /* Matches height of skin panel buttons */
-    background: rgba(15, 11, 31, 0.85);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(139, 92, 246, 0.4);
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    color: white;
-    font-size: 1.2rem;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-}
-
-.mute-toggle:hover {
-    background: var(--color-primary);
-    border-color: var(--color-primary-light);
-    transform: translateY(-2px);
-    box-shadow: 0 12px 40px rgba(139, 92, 246, 0.3);
-}
-
-.mute-toggle.is-muted {
-    color: #ff4757;
-    border-color: rgba(255, 71, 87, 0.6);
-}
-
-.mute-toggle svg {
-    width: 24px;
-    height: 24px;
-    display: block;
-    transition: transform 0.3s ease;
-}
-
-.mute-toggle:active svg {
-    transform: scale(0.85);
-}
-
-@media (max-width: 768px) {
-    .mute-toggle {
-        bottom: 15px;
-        right: 15px;
-        width: 42px;
-        height: 40px;
-    }
-}
-
-/* ========================================
-   Theme Toggle Button Styling
-   ======================================== */
-.theme-toggle {
-    position: fixed;
-    bottom: 20px;
-    right: 78px; /* Next to mute toggle */
     z-index: 2147483648 !important;
+}
+
+.settings-main-btn {
     width: 44px;
     height: 44px;
     background: rgba(15, 11, 31, 0.85);
@@ -3788,66 +3922,165 @@ canvas:hover {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: var(--transition-smooth);
     color: white;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-    overflow: hidden;
+    transition: var(--transition-smooth);
 }
 
-.theme-toggle:hover {
+.settings-main-btn svg {
+    width: 20px;
+    height: 20px;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.settings-container:hover .settings-main-btn {
     background: var(--color-primary);
     border-color: var(--color-primary-light);
-    transform: translateY(-2px);
-    color: #fff;
     box-shadow: 0 12px 40px rgba(139, 92, 246, 0.3);
 }
 
-[data-theme="light"] .theme-toggle {
+.settings-container:hover .settings-main-btn svg {
+    transform: rotate(90deg);
+}
+
+.settings-dropdown {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    opacity: 0;
+    visibility: hidden;
+    transition: var(--transition-smooth);
+    background: rgba(15, 11, 31, 0.95);
+    backdrop-filter: blur(var(--blur-glass));
+    border: 1px solid rgba(139, 92, 246, 0.4);
+    border-radius: 15px;
+    padding: 10px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+/* Invisible bridge to keep hover active between button and dropdown */
+.settings-dropdown::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    height: 15px;
+    background: transparent;
+}
+
+.settings-container:hover .settings-dropdown {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+}
+
+.settings-btn {
+    width: 44px;
+    height: 44px;
+    background: rgba(15, 11, 31, 0.85);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(139, 92, 246, 0.4);
+    border-radius: 12px;
+    cursor: pointer;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    transition: var(--transition-smooth);
+}
+
+.settings-btn:hover {
+    background: var(--color-primary);
+    border-color: var(--color-primary-light);
+    transform: translateX(-4px);
+}
+
+#mute-btn svg, #theme-btn svg {
+    width: 20px;
+    height: 20px;
+}
+
+#mute-btn.is-muted {
+    color: #ff4757;
+    border-color: rgba(255, 71, 87, 0.6);
+}
+
+.lang-toggle-label {
+    font-family: var(--font-heading);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    pointer-events: none;
+}
+
+[data-theme="light"] .settings-main-btn,
+[data-theme="light"] .settings-btn {
     background: rgba(255, 255, 255, 0.85);
     border-color: rgba(124, 62, 237, 0.15);
     color: var(--color-primary);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
 }
 
-[data-theme="light"] .theme-toggle:hover {
+[data-theme="light"] .settings-dropdown {
+    background: rgba(255, 255, 255, 0.95);
+    border-color: rgba(124, 62, 237, 0.2);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .settings-main-btn:hover,
+[data-theme="light"] .settings-btn:hover {
     background: rgba(124, 62, 237, 0.1);
     border-color: var(--color-primary);
     color: var(--color-primary-dark);
 }
 
-.theme-toggle svg {
-    width: 20px;
-    height: 20px;
-    transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.theme-toggle:hover svg {
-    transform: rotate(15deg) scale(1.1);
-}
-
-[data-theme="light"] .mute-toggle {
-    background: rgba(255, 255, 255, 0.8);
-    border-color: rgba(124, 62, 237, 0.15);
-    color: var(--color-primary);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-}
-
-[data-theme="light"] .mute-toggle:hover {
-    background: #fff;
-    border-color: var(--color-primary);
+[data-theme="light"] #mute-btn.is-muted {
+    color: #ff4757;
 }
 
 @media (max-width: 768px) {
-    .theme-toggle {
+    .settings-container {
         bottom: 15px;
-        right: 65px;
-        width: 42px;
-        height: 40px;
-    }
-    
-    .theme-toggle svg {
-        width: 18px;
-        height: 18px;
+        right: 15px;
     }
 }
 
+/* ========================================
+   RTL (Hebrew) Layout Overrides
+   ======================================== */
+
+/* About-me bio: always LTR in English, RTL in Hebrew */
+#bioContent {
+    text-align: left;
+    direction: ltr;
+}
+[dir="rtl"] #bioContent {
+    text-align: right;
+    direction: rtl;
+}
+
+/* Feature list: flip arrow to left side in RTL */
+[dir="rtl"] .feature-list li {
+    padding-left: 0;
+    padding-right: 1.5rem;
+    text-align: right;
+}
+[dir="rtl"] .feature-list li::before {
+    left: auto;
+    right: 0;
+    transform: scaleX(-1);
+    display: inline-block;
+}
+
+/* Keep navbar and UI toggles always LTR regardless of page direction */
+#navbar,
+.theme-toggle,
+.lang-toggle,
+.mute-toggle {
+    direction: ltr !important;
+}

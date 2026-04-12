@@ -40,6 +40,10 @@
     helloVoice.volume = 1.0;
     helloVoice.preload = 'auto';
 
+    const shalomVoice = new Audio(audioBase + 'shalom.mp3');
+    shalomVoice.volume = 1.0;
+    shalomVoice.preload = 'auto';
+
     const screamChannels = [];
     for (let i = 0; i < 5; i++) {
         let a = new Audio(audioBase + 'scream.mp3');
@@ -68,7 +72,7 @@
         localStorage.setItem('moshko_muted', _isMuted);
         
         if (_isMuted) {
-            const all = [hitSound, helloVoice, ...screamChannels, ...fallChannels].filter(Boolean);
+            const all = [hitSound, helloVoice, shalomVoice, ...screamChannels, ...fallChannels].filter(Boolean);
             all.forEach(a => { a.pause(); a.currentTime = 0; });
             stopDragLoop();
             if (_masterGain) _masterGain.gain.setValueAtTime(0, _ctx.currentTime);
@@ -132,7 +136,7 @@
             const osc = ctx.createOscillator();
             const gain = ctx.createGain();
             osc.connect(gain);
-            gain.connect(_masterGain);
+            gain.connect(_masterGain || ctx.destination);
 
             if (type === 'hover') {
                 osc.type = 'sine';
@@ -151,7 +155,8 @@
                 osc.start(t);
                 osc.stop(t + 0.1);
             }
-        } catch (e) { }
+            console.log("MoshkoSounds: Playing UI sound:", type);
+        } catch (e) { console.error("MoshkoSounds: UI Sound Error", e); }
     }
 
     function playMuteFeedback(isMuting) {
@@ -278,12 +283,73 @@
         } catch (e) { }
     }
 
+    function playExplosionSound() {
+        if (_isMuted) return;
+        try {
+            const ctx = getCtx();
+            if (ctx.state === 'suspended') ctx.resume();
+            const t = ctx.currentTime;
+            
+            // 1. Noise Buffer for the "boom"
+            const sampleRate = ctx.sampleRate || 44100;
+            const bufferSize = sampleRate * 1.5;
+            const buffer = ctx.createBuffer(1, bufferSize, sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                data[i] = Math.random() * 2 - 1;
+            }
+            const noise = ctx.createBufferSource();
+            noise.buffer = buffer;
+
+            const noiseFilter = ctx.createBiquadFilter();
+            noiseFilter.type = 'lowpass';
+            noiseFilter.frequency.setValueAtTime(800, t);
+            noiseFilter.frequency.exponentialRampToValueAtTime(40, t + 0.4);
+
+            const noiseGain = ctx.createGain();
+            noiseGain.gain.setValueAtTime(1.0, t);
+            noiseGain.gain.exponentialRampToValueAtTime(0.001, t + 1.2);
+
+            noise.connect(noiseFilter);
+            noiseFilter.connect(noiseGain);
+            noiseGain.connect(_masterGain || ctx.destination);
+            noise.start(t);
+            noise.stop(t + 1.2);
+
+            // 2. Low Frequency Thump
+            const osc = ctx.createOscillator();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(80, t);
+            osc.frequency.exponentialRampToValueAtTime(20, t + 0.2);
+            const oscGain = ctx.createGain();
+            oscGain.gain.setValueAtTime(0.8, t);
+            oscGain.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
+            osc.connect(oscGain);
+            oscGain.connect(_masterGain || ctx.destination);
+            osc.start(t);
+            osc.stop(t + 0.3);
+            console.log("MoshkoSounds: Explosion synthesized.");
+        } catch (e) { console.error("MoshkoSounds: Explosion synthesis error", e); }
+    }
+
     function playWaveSound() {
         if (_isMuted) return;
+        // In Hebrew mode — play shalom.mp3
+        if (window.MoshkoLang && window.MoshkoLang.current === 'he') {
+            try {
+                setTimeout(() => {
+                    if (_isMuted) return;
+                    shalomVoice.currentTime = 0;
+                    shalomVoice.play().catch(e => { });
+                }, 1500);
+            } catch (e) { }
+            return;
+        }
+        // English mode — play the hello audio file
         try {
             setTimeout(() => {
                 if (_isMuted) return;
-                helloVoice.currentTime = 0; 
+                helloVoice.currentTime = 0;
                 helloVoice.play().catch(e => { });
             }, 1500);
         } catch (e) { }
@@ -455,6 +521,7 @@
         playGrabSound,
         playSkinChangeSound,
         playResetSound,
+        playExplosionSound,
         playWaveSound,
         startDragLoop,
         updateDragLoop,

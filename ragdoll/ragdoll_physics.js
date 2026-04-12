@@ -211,7 +211,7 @@ class RagdollPhysics {
         // More forgiving stability check (25.0 vel instead of 15.0) to ignore floor jitter
         if (vel < 25.0 && angVel < 10.0 && Math.abs(rotZ) < 0.4 && this.standFactor >= 1.0) {
             if (!this.standingTimer) this.standingTimer = Date.now();
-            if (Date.now() - this.standingTimer > 500) {
+            if (Date.now() - this.standingTimer > 200) {
                 this.isStable = true;
                 this.stableStartTime = Date.now();
                 this.homePosition = new CANNON.Vec3().copy(body.position);
